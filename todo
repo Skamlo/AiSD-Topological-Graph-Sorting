@@ -1,0 +1,16 @@
+1. Menu
+    a. --generate
+    b. --user-provided
+2. Odporność na błędy
+3. Features
+    a. Wybieranie reprezentacji
+        i. matrix
+        ii. list
+        iii. table
+    b. Wypisanie grafu w wybranej reprezentacji
+    c. Wyszukanie krawędzi
+    d. Przechodzenie wszerz
+    e. Przechodzenie w głąb
+3.1. Sortowanie topologiczne grafu
+    a. Algorytm Kahna
+    b. Algorytm Tarjana
