@@ -30,3 +30,6 @@
 *.exe
 *.out
 *.app
+
+# unnecessary file
+create.sh
