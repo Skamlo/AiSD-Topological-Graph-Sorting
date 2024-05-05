@@ -1,8 +1,20 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <random>
 #include "graph.h"
 #include "menuFunctions.h"
+
+
+std::string stringToLowercase(std::string text)
+{
+    for (auto &x : text)
+    {
+        x = tolower(x);
+    }
+
+    return text;
+}
 
 
 bool textValidation(std::string *numbers) // Performs preprocessing data such as removing spaces
@@ -79,8 +91,35 @@ bool isValidValues(std::vector<int> &ids, int nNodes)
 }
 
 
+int countDigits(int number)
+{
+    int nDigits = 0;
+    while (number > 0)
+    {
+        nDigits++;
+        number /= 10;
+    }
+    return nDigits;
+}
+
+
 bool inputGenerate(std::vector<Node> &nodes)
 {
+    // read number of nodes and saturation
+    std::string nNodesStr;
+    int nNodes = 0;
+
+    std::string saturationStr;
+    int saturation = 0;
+
+    std::cout << "     nodes> ";
+    std::getline(std::cin, nNodesStr);
+    nNodes = strToInt(nNodesStr);
+
+    std::cout << "saturation> ";
+    std::getline(std::cin, saturationStr);
+    saturation = strToInt(saturationStr);
+
     // do some magic
 }
 
@@ -96,15 +135,8 @@ bool inputUserProvided(std::vector<Node> &nodes)
 
     for (int i=1; i<=nNodes; i++)
     {
-        // calculate number of space before ith node
-        int iLenght = 0;
-        int iCopy = i;
-        while (iCopy != 0)
-        {
-            iCopy /= 10;
-            iLenght += 1;
-        }
-
+        // print spaces before node number
+        int iLenght = countDigits(i);
         for (int space=0; space < 5-iLenght; space++)
             std::cout << " ";
 
@@ -140,4 +172,57 @@ bool inputUserProvided(std::vector<Node> &nodes)
     }
 
     return true;
+}
+
+
+bool changeGraphRepresentation(std::string *graphRepresentation)
+{
+    std::string newRepresentation;
+    std::cout << "type> ";
+    std::getline(std::cin, newRepresentation);
+    newRepresentation = stringToLowercase(newRepresentation);
+
+    if (newRepresentation == "list")
+        *graphRepresentation = "list";
+    else if (newRepresentation == "matrix")
+        *graphRepresentation = "matrix";
+    else if (newRepresentation == "table")
+        *graphRepresentation = "table";
+    else
+    {
+        std::cout << "This graph type does not exist.\n";
+        return 0;
+    }
+    std::cout << "Graph type was successfully changed.\n";
+    return 1;
+}
+
+
+void printGraph(std::vector<Node> nodes, std::string graphRepresentation)
+{
+    if (graphRepresentation == "list")
+    {
+        int nSpaces = countDigits(nodes.size());
+
+        for (int i=0; i<nodes.size(); i++)
+        {
+            for (int j=0; j<nSpaces-countDigits(i+1)+1; j++)
+                std::cout << " ";
+            std::cout << i+1 << "> ";
+
+            for (int j=0; j<nodes[i].getNeighbors().size(); j++)
+            {
+                std::cout << nodes[i].getNeighbors()[j] << " ";
+            }
+            std::cout << "\n";
+        }
+    }
+    else if (graphRepresentation == "matrix")
+    {
+        // do some magic
+    }
+    else if (graphRepresentation == "table")
+    {
+        // do some magic
+    }
 }

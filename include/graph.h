@@ -5,7 +5,7 @@
 class Node {
 private:
     int nodeId;
-    std::vector<int> neighbors;
+    std::vector<int> neighbors; // list of ids
 public:
     Node(int id);
     ~Node();

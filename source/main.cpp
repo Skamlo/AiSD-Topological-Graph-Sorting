@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <cstring>
+#include <string>
 #include "graph.h"
 #include "menuFunctions.h"
 
@@ -11,6 +12,7 @@
 std::vector<Node> nodes;
 
 int inputMode = PLACEHOLDER;
+std::string graphRepresentation = "list"; // list, matrix or table
 
 int main(int argc, char *argv[])
 {
@@ -38,11 +40,56 @@ int main(int argc, char *argv[])
         if (!inputGenerate(nodes))
             return 1;
     else if (inputMode == USER_PROVIDED)
-        std::cout << "It works!\n";
+        std::cout << "it works!\n";
         if (!inputUserProvided(nodes))
             return 1;
 
-    
+    while(true)
+    {
+        std::string option;
+        std::cout << "action> ";
+        std::getline(std::cin, option);
+        option = stringToLowercase(option);
+
+        if (option == "print")
+        {
+            printGraph(nodes, graphRepresentation);
+        }
+        else if (option == "type")
+        {
+            changeGraphRepresentation(&graphRepresentation);
+        }
+        else if (option == "find")
+        {
+            
+        }
+        else if (option == "breath-first search" || option == "breath-first")
+        {
+            
+        }
+        else if (option == "depth-first search" || option == "depth-first")
+        {
+            
+        }
+        else if (option == "help")
+        {
+            std::cout << "Help                  Show this message" << std::endl
+                      << "Print                 Print the graph in a previously specified type" << std::endl
+                      << "Type                  Change graph printing type" << std::endl
+                      << "Find                  Find graph edges" << std::endl
+                      << "Breath-first search   Print nodes in Breath-first order" << std::endl
+                      << "Depth-first search    Print nodes in Depth-first order" << std::endl
+                      << "Exit                  Exits the program" << std::endl;
+        }
+        else if (option == "exit")
+        {
+            break;
+        }
+        else
+        {
+            std::cout << "This command does not exist." << std::endl;
+        }
+    }
 
     return 0;
 }
