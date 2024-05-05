@@ -88,9 +88,11 @@ bool inputGenerate(std::vector<Node> &nodes)
 bool inputUserProvided(std::vector<Node> &nodes)
 {
     // read number of nodes in graph
+    std::string nNodesStr;
     int nNodes = 0;
     std::cout << "nodes> ";
-    std::cin >> nNodes;
+    std::getline(std::cin, nNodesStr);
+    nNodes = strToInt(nNodesStr);
 
     for (int i=1; i<=nNodes; i++)
     {
