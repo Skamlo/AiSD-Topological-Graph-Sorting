@@ -2,6 +2,7 @@
 #include <vector>
 #include <cstring>
 #include <string>
+#include <stack>
 #include "graph.h"
 #include "actions.h"
 
@@ -29,7 +30,8 @@ int main(int argc, char *argv[])
     }
     else
     {
-        std::cout << "You did not specify the input mode.\n" << std::endl;
+        std::cout << "You did not specify the input mode.\n"
+                  << std::endl;
         return 1;
     }
 
@@ -48,7 +50,7 @@ int main(int argc, char *argv[])
             return 1;
     }
 
-    while(true)
+    while (true)
     {
         std::string option;
         std::cout << "\naction> ";
@@ -65,15 +67,16 @@ int main(int argc, char *argv[])
         }
         else if (option == "find")
         {
-            
         }
-        else if (option == "breath-first search" || option == "breath-first")
+        else if (option == "breath-first search" || option == "breath-first" || option == "BFS")
         {
-            
         }
-        else if (option == "depth-first search" || option == "depth-first")
+        else if (option == "depth-first search" || option == "depth-first" || option == "DFS")
         {
-            
+            if (graphRepresentation == "matrix")
+            {
+                DFSforMatrix(graph, 0);
+            }
         }
         else if (option == "help")
         {
