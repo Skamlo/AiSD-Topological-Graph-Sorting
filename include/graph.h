@@ -1,15 +1,9 @@
-# pragma once
+#pragma once
 
 #include <vector>
+#include <string>
 
-class Node {
-private:
-    int nodeId;
-    std::vector<int> neighbors; // list of ids
-public:
-    Node(int id);
-    ~Node();
-    void addNeighbor(int neighbor);
-    int getId();
-    std::vector<int> getNeighbors();
-};
+std::vector<std::vector<int>> createMatrix(int rows, int cols);
+bool inputGenerate(std::vector<std::vector<int>>* graph);
+bool inputUserProvided(std::vector<std::vector<int>>* graph);
+void printGraph(std::vector<std::vector<int>> graph, std::string graphRepresentation);

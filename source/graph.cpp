@@ -1,33 +1,127 @@
+#include <iostream>
 #include <vector>
+#include <string>
+#include <random>
 #include "graph.h"
+#include "actions.h"
 
 
-// Constructor
-Node::Node(int id)
+std::vector<std::vector<int>> createMatrix(int rows, int cols)
 {
-    nodeId = id;
+    return std::vector<std::vector<int>>(rows, std::vector<int>(cols));
 }
 
-// Destructor
-Node::~Node()
+
+bool inputGenerate(std::vector<std::vector<int>>* graph)
 {
-    neighbors.clear();
+    // do some magic
+
+    return true;
 }
 
-// Method to add a neighbor to the node
-void Node::addNeighbor(int neighbor)
+
+bool inputUserProvided(std::vector<std::vector<int>>* graph)
 {
-    neighbors.push_back(neighbor);
+    // read number of nodes in graph
+    std::string nNodesStr;
+    int nNodes = 0;
+    std::cout << "nodes> ";
+    std::getline(std::cin, nNodesStr);
+    nNodes = strToInt(nNodesStr);
+
+    // create graph
+    *graph = createMatrix(nNodes, nNodes);
+
+    for (int i=1; i<=nNodes; i++)
+    {
+        // print spaces before node number
+        int iLenght = countDigits(i);
+        for (int space=0; space < 5-iLenght; space++)
+            std::cout << " ";
+
+        // read ids connected to current node
+        std::string idsString = "";
+        std::vector<int> ids;
+        std::cout << i << "> ";
+        std::getline(std::cin, idsString);
+
+        if (!textValidation(&idsString))
+        {
+            std::cout << "Incerrect input value.\n";
+            return false;
+        }
+
+        convertNodes(&ids, idsString);
+
+        // values validation
+        if (!isValidValues(ids, nNodes))
+        {
+            std::cout << "Node id out of range.\n";
+            return false;
+        }
+
+        // insert value to matrix
+        for(int j=0; j < ids.size(); j++)
+        {
+            (*graph)[i-1][ids[j]-1] = 1;
+        }
+    }
+
+    return true;
 }
 
-// Method to get the ID of the node
-int Node::getId()
+void printGraph(std::vector<std::vector<int>> graph, std::string graphRepresentation)
 {
-    return nodeId;
-}
+    if (graphRepresentation == "list")
+    {
+        for(int i=0; i<graph.size(); i++)
+        {
+            // print spaces before node number
+            int iLenght = countDigits(i+1);
+            for (int space=0; space < 6-iLenght; space++)
+                std::cout << " ";
 
-// Method to get the neighbors of the node
-std::vector<int> Node::getNeighbors()
-{
-    return neighbors;
+            // nodes
+            std::cout << i+1 << ">";
+            for(int j=0; j<graph.size(); j++)
+            {
+                if(graph[i][j] == 1)
+                    std::cout << " " << j+1;
+            }
+
+            std::cout << "\n";
+        }
+    }
+    else if (graphRepresentation == "matrix")
+    {
+        std::cout << "  |";
+        for(int i=1; i<=graph.size(); i++)
+            std::cout << " " << i;
+
+        std::cout << "\n--+-";
+        for(int i=1; i<=graph.size(); i++)
+            std::cout << "--";
+
+        std::cout << "\n";
+        for(int i=0; i<graph.size(); i++)
+        {
+            std::cout << i+1 << " |";
+            for(int j=0; j<graph.size(); j++)
+            {
+                std::cout << " " << graph[i][j];
+            }
+            std::cout << "\n";
+        }
+    }
+    else if (graphRepresentation == "table")
+    {
+        for (int i=0; i<graph.size(); i++)
+        {
+            for (int j=0; j<graph.size(); j++)
+            {
+                if(graph[i][j] == 1)
+                    std::cout << "   [" << i+1 << ", " << j+1 << "]\n";
+            }
+        }
+    }
 }

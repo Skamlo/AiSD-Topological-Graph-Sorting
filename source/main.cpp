@@ -3,16 +3,14 @@
 #include <cstring>
 #include <string>
 #include "graph.h"
-#include "menuFunctions.h"
+#include "actions.h"
 
 #define PLACEHOLDER 0
 #define GENERATE 1
 #define USER_PROVIDED 2
 
-std::vector<Node> nodes;
-
 int inputMode = PLACEHOLDER;
-std::string graphRepresentation = "list"; // list, matrix or table
+std::string graphRepresentation = "matrix"; // list, matrix or table
 
 int main(int argc, char *argv[])
 {
@@ -36,24 +34,30 @@ int main(int argc, char *argv[])
     }
 
     // value input
+    std::vector<std::vector<int>> graph;
+    bool sucess = false;
+
     if (inputMode == GENERATE)
-        if (!inputGenerate(nodes))
+    {
+        if (!inputGenerate(&graph))
             return 1;
+    }
     else if (inputMode == USER_PROVIDED)
-        std::cout << "it works!\n";
-        if (!inputUserProvided(nodes))
+    {
+        if (!inputUserProvided(&graph))
             return 1;
+    }
 
     while(true)
     {
         std::string option;
-        std::cout << "action> ";
+        std::cout << "\naction> ";
         std::getline(std::cin, option);
         option = stringToLowercase(option);
 
         if (option == "print")
         {
-            printGraph(nodes, graphRepresentation);
+            printGraph(graph, graphRepresentation);
         }
         else if (option == "type")
         {
