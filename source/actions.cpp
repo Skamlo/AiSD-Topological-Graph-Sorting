@@ -3,6 +3,8 @@
 #include <string>
 #include <random>
 #include <stack>
+#include <queue>
+#include <set>
 #include "graph.h"
 #include "actions.h"
 
@@ -126,6 +128,8 @@ bool changeGraphRepresentation(std::string *graphRepresentation)
     return 1;
 }
 
+// DFS FOR MATRIX HERE
+
 void DFSRecursive(const std::vector<std::vector<int>> &graph, std::vector<bool> &visited, int currentNode)
 {
     // Oznacz bieżący wierzchołek jako odwiedzony
@@ -150,4 +154,34 @@ void DFSforMatrix(std::vector<std::vector<int>> &graph, int startNode)
 
     // Wywołaj DFS rekurencyjnie dla startowego wierzchołka
     DFSRecursive(graph, visited, startNode);
+}
+
+// nie jestem pewny czy to dziala
+
+void BFS(std::vector<std::vector<int>> &graph, int startNode)
+{
+    int numNodes = graph.size();
+    std::vector<bool> visited(numNodes, false); // Tablica odwiedzin
+    std::set<int> queue;                        // Zbiór do przechowywania wierzchołków
+
+    // Rozpoczęcie BFS od startowego wierzchołka
+    queue.insert(startNode);
+    visited[startNode] = true;
+
+    while (!queue.empty())
+    {
+        int currentNode = *queue.begin();
+        queue.erase(queue.begin());
+        std::cout << currentNode + 1 << " "; // Wyświetlenie odwiedzonego wierzchołka
+
+        // Przetwarzanie sąsiednich wierzchołków
+        for (int neighbor = 0; neighbor < numNodes; ++neighbor)
+        {
+            if (graph[currentNode][neighbor] == 1 && !visited[neighbor])
+            {
+                queue.insert(neighbor);
+                visited[neighbor] = true;
+            }
+        }
+    }
 }

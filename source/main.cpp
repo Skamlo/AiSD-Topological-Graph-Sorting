@@ -70,6 +70,7 @@ int main(int argc, char *argv[])
         }
         else if (option == "breath-first search" || option == "breath-first" || option == "BFS")
         {
+            BFS(graph, 0);
         }
         else if (option == "depth-first search" || option == "depth-first" || option == "DFS")
         {

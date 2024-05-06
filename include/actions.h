@@ -16,3 +16,4 @@ bool inputUserProvided(std::vector<std::vector<int>> &graph);
 bool changeGraphRepresentation(std::string *graphRepresentation);
 void printGraph(std::vector<std::vector<int>> graph, std::string graphRepresentation);
 void DFSforMatrix(std::vector<std::vector<int>> &graph, int startNode);
+void BFS(std::vector<std::vector<int>> &graph, int startNode);
