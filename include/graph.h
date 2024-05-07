@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <string>
+#include <unordered_set>
 
 class Graph
 {
@@ -39,13 +40,18 @@ public:
     bool isEdgeExistTable(int startNode, int endNode);
 
     // sorting algorithms
+    /// functions to handle diffrent variants
     void BFS();
     void DFS();
-    void DFSrecursive(std::vector<bool> &visited, int currentNode);
-    void BFSmatrix(int startNode);
+    /// for matrix representation
+    void DFSrecursiveMatrix(std::vector<bool> &visited, int currentNode);
     void DFSmatrix(int startNode);
+    void BFSmatrix(int startNode);
+    /// for list representation
     void BFSlist(int startNode);
     void DFSlist(int startNode);
+    void DFSrecursiveList(int currentNode, std::unordered_set<int> &visited);
+    /// for table representation
     void BFStable(int startNode);
     void DFStable(int startNode);
 };

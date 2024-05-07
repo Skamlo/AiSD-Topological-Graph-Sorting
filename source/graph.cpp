@@ -4,27 +4,30 @@
 #include <random>
 #include <algorithm>
 #include <queue>
+#include <set>
+#include <unordered_set>
+#include <stack>
 #include "graph.h"
 #include "actions.h"
-
 
 std::vector<std::vector<int>> Graph::createMatrix(int rows, int cols)
 {
     return std::vector<std::vector<int>>(rows, std::vector<int>(cols));
 }
 
-
 std::vector<int> Graph::generateUniqueNumbers(int n, int k)
 {
     // Check if the range is smaller than the number of required unique numbers
-    if (k > n + 1) {
+    if (k > n + 1)
+    {
         std::cerr << "Error: Number of unique numbers required exceeds the range." << std::endl;
         return std::vector<int>();
     }
 
     // Create a vector to hold the generated numbers
     std::vector<int> numbers(n + 1);
-    for (int i = 0; i <= n; ++i) {
+    for (int i = 0; i <= n; ++i)
+    {
         numbers[i] = i;
     }
 
@@ -38,7 +41,6 @@ std::vector<int> Graph::generateUniqueNumbers(int n, int k)
 
     return result;
 }
-
 
 bool Graph::inputGenerate()
 {
@@ -66,14 +68,14 @@ bool Graph::inputGenerate()
     int nNodesInUpperTriangle = nNodes * (nNodes - 1) / 2;
     int nNodesToFill = nNodesInUpperTriangle * saturation / 100;
 
-    std::vector<int> indexes = generateUniqueNumbers(nNodesInUpperTriangle-1, nNodesToFill);
+    std::vector<int> indexes = generateUniqueNumbers(nNodesInUpperTriangle - 1, nNodesToFill);
 
     // create graph
     matrix = createMatrix(nNodes, nNodes);
 
-    for (int i=0; i<indexes.size(); i++)
+    for (int i = 0; i < indexes.size(); i++)
     {
-        for (int j=0; j<nNodes-1; j++)
+        for (int j = 0; j < nNodes - 1; j++)
         {
             if (indexes[i] + 1 < nNodes - 1 - j)
             {
@@ -90,7 +92,6 @@ bool Graph::inputGenerate()
     return true;
 }
 
-
 bool Graph::inputUserProvided()
 {
     // read number of nodes in graph
@@ -103,11 +104,11 @@ bool Graph::inputUserProvided()
     // create graph
     matrix = createMatrix(nNodes, nNodes);
 
-    for (int i=1; i<=nNodes; i++)
+    for (int i = 1; i <= nNodes; i++)
     {
         // print spaces before node number
         int iLenght = countDigits(i);
-        for (int space=0; space < 5-iLenght; space++)
+        for (int space = 0; space < 5 - iLenght; space++)
             std::cout << " ";
 
         // read ids connected to current node
@@ -132,27 +133,26 @@ bool Graph::inputUserProvided()
         }
 
         // insert value to matrix
-        for(int j=0; j < ids.size(); j++)
+        for (int j = 0; j < ids.size(); j++)
         {
-            matrix[i-1][ids[j]-1] = 1;
+            matrix[i - 1][ids[j] - 1] = 1;
         }
     }
 
     return true;
 }
 
-
 void Graph::generateList()
 {
-    for (int r=0; r<matrix.size(); r++)
+    for (int r = 0; r < matrix.size(); r++)
     {
         std::vector<int> row;
 
-        for (int c=0; c<matrix.size(); c++)
+        for (int c = 0; c < matrix.size(); c++)
         {
             if (matrix[r][c] == 1)
             {
-                row.push_back(c+1);
+                row.push_back(c + 1);
             }
         }
 
@@ -160,24 +160,22 @@ void Graph::generateList()
     }
 }
 
-
 void Graph::generateTable()
 {
-    for (int r=0; r<matrix.size(); r++)
+    for (int r = 0; r < matrix.size(); r++)
     {
-        for (int c=0; c<matrix.size(); c++)
+        for (int c = 0; c < matrix.size(); c++)
         {
             if (matrix[r][c] == 1)
             {
                 std::vector<int> edge;
-                edge.push_back(r+1);
-                edge.push_back(c+1);
+                edge.push_back(r + 1);
+                edge.push_back(c + 1);
                 table.push_back(edge);
             }
         }
     }
 }
-
 
 void Graph::changeGraphRepresentation()
 {
@@ -217,7 +215,6 @@ void Graph::changeGraphRepresentation()
     }
 }
 
-
 void Graph::print()
 {
     if (graphRepresentation == "matrix")
@@ -234,22 +231,21 @@ void Graph::print()
     }
 }
 
-
 void Graph::printMatrix()
 {
     std::cout << "  |";
-    for(int i=1; i<=matrix.size(); i++)
+    for (int i = 1; i <= matrix.size(); i++)
         std::cout << " " << i;
 
     std::cout << "\n--+-";
-    for(int i=1; i<=matrix.size(); i++)
+    for (int i = 1; i <= matrix.size(); i++)
         std::cout << "--";
 
     std::cout << "\n";
-    for(int i=0; i<matrix.size(); i++)
+    for (int i = 0; i < matrix.size(); i++)
     {
-        std::cout << i+1 << " |";
-        for(int j=0; j<matrix.size(); j++)
+        std::cout << i + 1 << " |";
+        for (int j = 0; j < matrix.size(); j++)
         {
             std::cout << " " << matrix[i][j];
         }
@@ -257,13 +253,12 @@ void Graph::printMatrix()
     }
 }
 
-
 void Graph::printList()
 {
-    for (int i=0; i<list.size(); i++)
+    for (int i = 0; i < list.size(); i++)
     {
-        std::cout << i+1 << ">";
-        for (int j=0; j<list[i].size(); j++)
+        std::cout << i + 1 << ">";
+        for (int j = 0; j < list[i].size(); j++)
         {
             std::cout << " " << list[i][j];
         }
@@ -271,15 +266,13 @@ void Graph::printList()
     }
 }
 
-
 void Graph::printTable()
 {
-    for (int i=0; i<table.size(); i++)
+    for (int i = 0; i < table.size(); i++)
     {
         std::cout << "\t[" << table[i][0] << ", " << table[i][1] << "]\n";
     }
 }
-
 
 void Graph::find()
 {
@@ -317,26 +310,23 @@ void Graph::find()
     }
 }
 
-
 bool Graph::isEdgeExistMatrix(int startNode, int endNode)
 {
-    if (matrix[startNode-1][endNode-1] == 1)
+    if (matrix[startNode - 1][endNode - 1] == 1)
         return true;
     else
         return false;
 }
 
-
 bool Graph::isEdgeExistList(int startNode, int endNode)
 {
-    for (int i=0; i<list[startNode].size(); i++)
+    for (int i = 0; i < list[startNode].size(); i++)
     {
         if (list[startNode][i] == endNode)
             return true;
     }
     return false;
 }
-
 
 bool Graph::isEdgeExistTable(int startNode, int endNode)
 {
@@ -345,7 +335,7 @@ bool Graph::isEdgeExistTable(int startNode, int endNode)
         generateTable();
     }
 
-    for (int i=0; i<table.size(); i++)
+    for (int i = 0; i < table.size(); i++)
     {
         if (table[i][0] == startNode && table[i][1] == endNode)
             return true;
@@ -353,7 +343,6 @@ bool Graph::isEdgeExistTable(int startNode, int endNode)
 
     return false;
 }
-
 
 void Graph::BFS()
 {
@@ -379,7 +368,6 @@ void Graph::BFS()
     }
 }
 
-
 void Graph::DFS()
 {
     // read starting node
@@ -404,76 +392,107 @@ void Graph::DFS()
     }
 }
 
-
-void Graph::DFSrecursive(std::vector<bool> &visited, int currentNode)
+// MATRIX REPRESENTATION
+void Graph::DFSrecursiveMatrix(std::vector<bool> &visitedNodes, int currentNode)
 {
-    // visited[currentNode] = true;
-    // std::cout << currentNode + 1 << " ";
+    visitedNodes[currentNode] = true;
+    std::cout << currentNode + 1 << " ";
 
-    // for (int neighbor = 0; neighbor < graph.size(); ++neighbor)
-    // {
-    //     if (graph[currentNode][neighbor] == 1 && !visited[neighbor])
-    //     {
-    //         DFSRecursive(graph, visited, neighbor);
-    //     }
-    // }
+    // going through nodes
+    for (int neighbor = 0; neighbor < matrix.size(); ++neighbor)
+    {
+        if (matrix[currentNode][neighbor] == 1 && !visitedNodes[neighbor])
+        {
+            Graph::DFSrecursiveMatrix(visitedNodes, neighbor);
+        }
+    }
 }
 
-
-void Graph::BFSmatrix(int startNode)
+void Graph::DFSrecursiveList(int currentNode, std::unordered_set<int> &visited)
 {
-    // int numNodes = graph.size();
-    // std::vector<bool> visited(numNodes, false);
-    // std::set<int> queue;
+    visited.insert(currentNode);
+    std::cout << currentNode + 1 << " ";
 
-    // queue.insert(startNode);
-    // visited[startNode] = true;
-
-    // while (!queue.empty())
-    // {
-    //     int currentNode = *queue.begin();
-    //     queue.erase(queue.begin());
-    //     std::cout << currentNode + 1 << " ";
-
-    //     for (int neighbor = 0; neighbor < numNodes; ++neighbor)
-    //     {
-    //         if (graph[currentNode][neighbor] == 1 && !visited[neighbor])
-    //         {
-    //             queue.insert(neighbor);
-    //             visited[neighbor] = true;
-    //         }
-    //     }
-    // }
+    // going through nodes
+    for (int neighbor : list[currentNode])
+    {
+        if (visited.find(neighbor) == visited.end())
+        {
+            Graph::DFSrecursiveList(neighbor, visited);
+        }
+    }
 }
-
 
 void Graph::DFSmatrix(int startNode)
 {
-    // int nNodes = matrix.size();
-    // std::vector<bool> visited(nNodes, false);
-    // DFSRecursive(graph, visited, startNode);
+    int nNodes = matrix.size();
+    std::vector<bool> visitedNodes(nNodes, false);
+    Graph::DFSrecursiveMatrix(visitedNodes, startNode);
 }
 
+void Graph::BFSmatrix(int startNode)
+{
+    int numNodes = matrix.size();
+    std::vector<bool> visitedNodes(numNodes, false);
+    std::set<int> queue;
 
+    queue.insert(startNode);
+    visitedNodes[startNode] = true;
+
+    while (!queue.empty())
+    {
+        int currentNode = *queue.begin();
+        queue.erase(queue.begin());
+        std::cout << currentNode + 1 << " ";
+
+        for (int neighbor = 0; neighbor < numNodes; ++neighbor)
+        {
+            if (matrix[currentNode][neighbor] == 1 && !visitedNodes[neighbor])
+            {
+                queue.insert(neighbor);
+                visitedNodes[neighbor] = true;
+            }
+        }
+    }
+}
+
+// LIST REPRESENTATION
 void Graph::BFSlist(int startNode)
 {
+    std::queue<int> queue;
+    std::unordered_set<int> visited;
 
+    queue.push(startNode);
+    visited.insert(startNode);
+
+    while (!queue.empty())
+    {
+        int currentNode = queue.front();
+        queue.pop();
+        std::cout << currentNode + 1 << " ";
+
+        for (int neighbor : list[currentNode])
+        {
+            if (visited.find(neighbor) == visited.end())
+            {
+                queue.push(neighbor);
+                visited.insert(neighbor);
+            }
+        }
+    }
 }
-
 
 void Graph::DFSlist(int startNode)
 {
-
+    std::unordered_set<int> visited;
+    Graph::DFSrecursiveList(startNode, visited);
 }
 
-
+// TABLE REPRESENTATION
 void Graph::BFStable(int startNode)
 {
-
 }
-
 
 void Graph::DFStable(int startNode)
 {
-
 }
