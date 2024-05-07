@@ -11,7 +11,9 @@
 #define USER_PROVIDED 2
 
 int inputMode = PLACEHOLDER;
-std::string graphRepresentation = "matrix"; // list, matrix or table
+
+// main graph object
+Graph graph;
 
 int main(int argc, char *argv[])
 {
@@ -35,13 +37,9 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    // value input
-    std::vector<std::vector<int>> graph;
-    bool sucess = false;
-
     if (inputMode == GENERATE)
     {
-        if (!inputGenerate(&graph))
+        if (!graph.inputGenerate())
         {
             std::cout << "Graph generation failed.\n";
             return 1;
@@ -49,7 +47,7 @@ int main(int argc, char *argv[])
     }
     else if (inputMode == USER_PROVIDED)
     {
-        if (!inputUserProvided(&graph))
+        if (!graph.inputUserProvided())
             return 1;
     }
 
@@ -62,25 +60,25 @@ int main(int argc, char *argv[])
 
         if (option == "print")
         {
-            printGraph(graph, graphRepresentation);
+            graph.print();
         }
         else if (option == "type")
         {
-            changeGraphRepresentation(&graphRepresentation);
+            graph.changeGraphRepresentation();
         }
         else if (option == "find")
         {
         }
         else if (option == "breath-first search" || option == "breath-first" || option == "BFS")
         {
-            BFS(graph, 0);
+            // BFS(graph, 0);
         }
         else if (option == "depth-first search" || option == "depth-first" || option == "DFS")
         {
-            if (graphRepresentation == "matrix")
-            {
-                DFSforMatrix(graph, 0);
-            }
+            // if (graphRepresentation == "matrix")
+            // {
+            //     DFSforMatrix(graph, 0);
+            // }
         }
         else if (option == "help")
         {

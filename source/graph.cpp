@@ -7,13 +7,14 @@
 #include "actions.h"
 
 
-std::vector<std::vector<int>> createMatrix(int rows, int cols)
+std::vector<std::vector<int>> Graph::createMatrix(int rows, int cols)
 {
     return std::vector<std::vector<int>>(rows, std::vector<int>(cols));
 }
 
 
-std::vector<int> generateUniqueNumbers(int n, int k) {
+std::vector<int> Graph::generateUniqueNumbers(int n, int k)
+{
     // Check if the range is smaller than the number of required unique numbers
     if (k > n + 1) {
         std::cerr << "Error: Number of unique numbers required exceeds the range." << std::endl;
@@ -38,7 +39,7 @@ std::vector<int> generateUniqueNumbers(int n, int k) {
 }
 
 
-bool inputGenerate(std::vector<std::vector<int>>* graph)
+bool Graph::inputGenerate()
 {
     // read number of nodes in graph
     std::string nNodesStr;
@@ -67,7 +68,7 @@ bool inputGenerate(std::vector<std::vector<int>>* graph)
     std::vector<int> indexes = generateUniqueNumbers(nNodesInUpperTriangle-1, nNodesToFill);
 
     // create graph
-    *graph = createMatrix(nNodes, nNodes);
+    matrix = createMatrix(nNodes, nNodes);
 
     for (int i=0; i<indexes.size(); i++)
     {
@@ -75,7 +76,7 @@ bool inputGenerate(std::vector<std::vector<int>>* graph)
         {
             if (indexes[i] + 1 < nNodes - 1 - j)
             {
-                (*graph)[j][j + 2 + indexes[i]] = 1;
+                matrix[j][j + 2 + indexes[i]] = 1;
                 break;
             }
             else
@@ -89,7 +90,7 @@ bool inputGenerate(std::vector<std::vector<int>>* graph)
 }
 
 
-bool inputUserProvided(std::vector<std::vector<int>>* graph)
+bool Graph::inputUserProvided()
 {
     // read number of nodes in graph
     std::string nNodesStr;
@@ -99,7 +100,7 @@ bool inputUserProvided(std::vector<std::vector<int>>* graph)
     nNodes = strToInt(nNodesStr);
 
     // create graph
-    *graph = createMatrix(nNodes, nNodes);
+    matrix = createMatrix(nNodes, nNodes);
 
     for (int i=1; i<=nNodes; i++)
     {
@@ -132,65 +133,208 @@ bool inputUserProvided(std::vector<std::vector<int>>* graph)
         // insert value to matrix
         for(int j=0; j < ids.size(); j++)
         {
-            (*graph)[i-1][ids[j]-1] = 1;
+            matrix[i-1][ids[j]-1] = 1;
         }
     }
 
     return true;
 }
 
-void printGraph(std::vector<std::vector<int>> graph, std::string graphRepresentation)
+
+void Graph::generateList()
 {
-    if (graphRepresentation == "list")
+    for (int r=0; r<matrix.size(); r++)
     {
-        for(int i=0; i<graph.size(); i++)
-        {
-            // print spaces before node number
-            int iLenght = countDigits(i+1);
-            for (int space=0; space < 6-iLenght; space++)
-                std::cout << " ";
+        std::vector<int> row;
 
-            // nodes
-            std::cout << i+1 << ">";
-            for(int j=0; j<graph.size(); j++)
+        for (int c=0; c<matrix.size(); c++)
+        {
+            if (matrix[r][c] == 1)
             {
-                if(graph[i][j] == 1)
-                    std::cout << " " << j+1;
+                row.push_back(c+1);
             }
-
-            std::cout << "\n";
         }
-    }
-    else if (graphRepresentation == "matrix")
-    {
-        std::cout << "  |";
-        for(int i=1; i<=graph.size(); i++)
-            std::cout << " " << i;
 
-        std::cout << "\n--+-";
-        for(int i=1; i<=graph.size(); i++)
-            std::cout << "--";
-
-        std::cout << "\n";
-        for(int i=0; i<graph.size(); i++)
-        {
-            std::cout << i+1 << " |";
-            for(int j=0; j<graph.size(); j++)
-            {
-                std::cout << " " << graph[i][j];
-            }
-            std::cout << "\n";
-        }
+        list.push_back(row);
     }
-    else if (graphRepresentation == "table")
+}
+
+
+void Graph::generateTable()
+{
+    for (int r=0; r<matrix.size(); r++)
     {
-        for (int i=0; i<graph.size(); i++)
+        for (int c=0; c<matrix.size(); c++)
         {
-            for (int j=0; j<graph.size(); j++)
+            if (matrix[r][c] == 1)
             {
-                if(graph[i][j] == 1)
-                    std::cout << "   [" << i+1 << ", " << j+1 << "]\n";
+                std::vector<int> edge;
+                edge.push_back(r+1);
+                edge.push_back(c+1);
+                table.push_back(edge);
             }
         }
     }
 }
+
+
+void Graph::changeGraphRepresentation()
+{
+    std::string newRepresentation;
+    std::cout << "type> ";
+    std::getline(std::cin, newRepresentation);
+    newRepresentation = stringToLowercase(newRepresentation);
+
+    if (newRepresentation == "matrix")
+    {
+        graphRepresentation = "matrix";
+        std::cout << "Graph type was successfully changed.\n";
+    }
+    else if (newRepresentation == "list")
+    {
+        graphRepresentation = "list";
+        if (listAlreadyCreated == false)
+        {
+            generateList();
+            listAlreadyCreated = true;
+        }
+        std::cout << "Graph type was successfully changed.\n";
+    }
+    else if (newRepresentation == "table")
+    {
+        graphRepresentation = "table";
+        if (tableAlreadyCreated == false)
+        {
+            generateTable();
+            tableAlreadyCreated = true;
+        }
+        std::cout << "Graph type was successfully changed.\n";
+    }
+    else
+    {
+        std::cout << "This graph type does not exist.\n";
+    }
+}
+
+
+void Graph::print()
+{
+    if (graphRepresentation == "matrix")
+    {
+        printMatrix();
+    }
+    else if (graphRepresentation == "list")
+    {
+        printList();
+    }
+    else if (graphRepresentation == "table")
+    {
+        printTable();
+    }
+}
+
+
+void Graph::printMatrix()
+{
+    std::cout << "  |";
+    for(int i=1; i<=matrix.size(); i++)
+        std::cout << " " << i;
+
+    std::cout << "\n--+-";
+    for(int i=1; i<=matrix.size(); i++)
+        std::cout << "--";
+
+    std::cout << "\n";
+    for(int i=0; i<matrix.size(); i++)
+    {
+        std::cout << i+1 << " |";
+        for(int j=0; j<matrix.size(); j++)
+        {
+            std::cout << " " << matrix[i][j];
+        }
+        std::cout << "\n";
+    }
+}
+
+
+void Graph::printList()
+{
+    for (int i=0; i<list.size(); i++)
+    {
+        std::cout << i+1 << ">";
+        for (int j=0; j<list[i].size(); j++)
+        {
+            std::cout << " " << list[i][j];
+        }
+        std::cout << "\n";
+    }
+}
+
+
+void Graph::printTable()
+{
+    for (int i=0; i<table.size(); i++)
+    {
+        std::cout << "\t[" << table[i][0] << ", " << table[i][1] << "]\n";
+    }
+}
+
+
+// DFS FOR MATRIX HERE
+
+void DFSRecursive(const std::vector<std::vector<int>> &graph, std::vector<bool> &visited, int currentNode)
+{
+    // Oznacz bieżący wierzchołek jako odwiedzony
+    visited[currentNode] = true;
+    std::cout << currentNode + 1 << " "; // Wyświetl bieżący wierzchołek
+
+    // Przeszukaj sąsiednie wierzchołki
+    for (int neighbor = 0; neighbor < graph.size(); ++neighbor)
+    {
+        if (graph[currentNode][neighbor] == 1 && !visited[neighbor])
+        {
+            // Wywołaj rekurencyjnie DFS dla nieodwiedzonego sąsiada
+            DFSRecursive(graph, visited, neighbor);
+        }
+    }
+}
+
+
+// void DFSforMatrix(std::vector<std::vector<int>> &graph, int startNode)
+// {
+//     int numNodes = graph.size();
+//     std::vector<bool> visited(numNodes, false); // Tablica odwiedzin
+
+//     // Wywołaj DFS rekurencyjnie dla startowego wierzchołka
+//     DFSRecursive(graph, visited, startNode);
+// }
+
+// // nie jestem pewny czy to dziala
+
+// void BFS(std::vector<std::vector<int>> &graph, int startNode)
+// {
+//     int numNodes = graph.size();
+//     std::vector<bool> visited(numNodes, false); // Tablica odwiedzin
+//     std::set<int> queue;                        // Zbiór do przechowywania wierzchołków
+
+//     // Rozpoczęcie BFS od startowego wierzchołka
+//     queue.insert(startNode);
+//     visited[startNode] = true;
+
+//     while (!queue.empty())
+//     {
+//         int currentNode = *queue.begin();
+//         queue.erase(queue.begin());
+//         std::cout << currentNode + 1 << " "; // Wyświetlenie odwiedzonego wierzchołka
+
+//         // Przetwarzanie sąsiednich wierzchołków
+//         for (int neighbor = 0; neighbor < numNodes; ++neighbor)
+//         {
+//             if (graph[currentNode][neighbor] == 1 && !visited[neighbor])
+//             {
+//                 queue.insert(neighbor);
+//                 visited[neighbor] = true;
+//             }
+//         }
+//     }
+// }

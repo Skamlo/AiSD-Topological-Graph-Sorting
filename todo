@@ -1,12 +1,12 @@
 1. Menu
-    a. --generate
+    a. --generate - DONE
     b. --user-provided - DONE
 2. Odporność na błędy
 3. Features
     a. Wybieranie reprezentacji - DONE
         i. matrix - DONE
-        ii. list
-        iii. table
+        ii. list - DONE
+        iii. table - DONE
     b. Wypisanie grafu w wybranej reprezentacji - DONE
         i. matrix - DONE
         ii. list - DONE

@@ -36,3 +36,5 @@ create.sh
 
 # unnecessary folders
 .vscode
+oldSource
+oldInclude

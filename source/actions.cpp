@@ -8,6 +8,7 @@
 #include "graph.h"
 #include "actions.h"
 
+
 std::string stringToLowercase(std::string text)
 {
     for (auto &x : text)
@@ -17,6 +18,7 @@ std::string stringToLowercase(std::string text)
 
     return text;
 }
+
 
 bool textValidation(std::string *numbers)
 {
@@ -52,6 +54,7 @@ bool textValidation(std::string *numbers)
     return true;
 }
 
+
 int strToInt(std::string numberString)
 {
     int numberInt = 0;
@@ -62,6 +65,7 @@ int strToInt(std::string numberString)
     }
     return numberInt;
 }
+
 
 void convertNodes(std::vector<int> *ids, std::string numbers)
 {
@@ -85,6 +89,7 @@ void convertNodes(std::vector<int> *ids, std::string numbers)
         ids->push_back(currentNumber);
 }
 
+
 bool isValidValues(std::vector<int> &ids, int nNodes)
 {
     for (int i = 0; i < ids.size(); i++)
@@ -94,6 +99,7 @@ bool isValidValues(std::vector<int> &ids, int nNodes)
     }
     return true;
 }
+
 
 int countDigits(int number)
 {
@@ -106,82 +112,61 @@ int countDigits(int number)
     return nDigits;
 }
 
-bool changeGraphRepresentation(std::string *graphRepresentation)
-{
-    std::string newRepresentation;
-    std::cout << "type> ";
-    std::getline(std::cin, newRepresentation);
-    newRepresentation = stringToLowercase(newRepresentation);
-
-    if (newRepresentation == "list")
-        *graphRepresentation = "list";
-    else if (newRepresentation == "matrix")
-        *graphRepresentation = "matrix";
-    else if (newRepresentation == "table")
-        *graphRepresentation = "table";
-    else
-    {
-        std::cout << "This graph type does not exist.\n";
-        return 0;
-    }
-    std::cout << "Graph type was successfully changed.\n";
-    return 1;
-}
 
 // DFS FOR MATRIX HERE
 
-void DFSRecursive(const std::vector<std::vector<int>> &graph, std::vector<bool> &visited, int currentNode)
-{
-    // Oznacz bieżący wierzchołek jako odwiedzony
-    visited[currentNode] = true;
-    std::cout << currentNode + 1 << " "; // Wyświetl bieżący wierzchołek
+// void DFSRecursive(const std::vector<std::vector<int>> &graph, std::vector<bool> &visited, int currentNode)
+// {
+//     // Oznacz bieżący wierzchołek jako odwiedzony
+//     visited[currentNode] = true;
+//     std::cout << currentNode + 1 << " "; // Wyświetl bieżący wierzchołek
 
-    // Przeszukaj sąsiednie wierzchołki
-    for (int neighbor = 0; neighbor < graph.size(); ++neighbor)
-    {
-        if (graph[currentNode][neighbor] == 1 && !visited[neighbor])
-        {
-            // Wywołaj rekurencyjnie DFS dla nieodwiedzonego sąsiada
-            DFSRecursive(graph, visited, neighbor);
-        }
-    }
-}
+//     // Przeszukaj sąsiednie wierzchołki
+//     for (int neighbor = 0; neighbor < graph.size(); ++neighbor)
+//     {
+//         if (graph[currentNode][neighbor] == 1 && !visited[neighbor])
+//         {
+//             // Wywołaj rekurencyjnie DFS dla nieodwiedzonego sąsiada
+//             DFSRecursive(graph, visited, neighbor);
+//         }
+//     }
+// }
 
-void DFSforMatrix(std::vector<std::vector<int>> &graph, int startNode)
-{
-    int numNodes = graph.size();
-    std::vector<bool> visited(numNodes, false); // Tablica odwiedzin
+// void DFSforMatrix(std::vector<std::vector<int>> &graph, int startNode)
+// {
+//     int numNodes = graph.size();
+//     std::vector<bool> visited(numNodes, false); // Tablica odwiedzin
 
-    // Wywołaj DFS rekurencyjnie dla startowego wierzchołka
-    DFSRecursive(graph, visited, startNode);
-}
+//     // Wywołaj DFS rekurencyjnie dla startowego wierzchołka
+//     DFSRecursive(graph, visited, startNode);
+// }
 
 // nie jestem pewny czy to dziala
 
-void BFS(std::vector<std::vector<int>> &graph, int startNode)
-{
-    int numNodes = graph.size();
-    std::vector<bool> visited(numNodes, false); // Tablica odwiedzin
-    std::set<int> queue;                        // Zbiór do przechowywania wierzchołków
+// void BFS(std::vector<std::vector<int>> &graph, int startNode)
+// {
+//     int numNodes = graph.size();
+//     std::vector<bool> visited(numNodes, false); // Tablica odwiedzin
+//     std::set<int> queue;                        // Zbiór do przechowywania wierzchołków
 
-    // Rozpoczęcie BFS od startowego wierzchołka
-    queue.insert(startNode);
-    visited[startNode] = true;
+//     // Rozpoczęcie BFS od startowego wierzchołka
+//     queue.insert(startNode);
+//     visited[startNode] = true;
 
-    while (!queue.empty())
-    {
-        int currentNode = *queue.begin();
-        queue.erase(queue.begin());
-        std::cout << currentNode + 1 << " "; // Wyświetlenie odwiedzonego wierzchołka
+//     while (!queue.empty())
+//     {
+//         int currentNode = *queue.begin();
+//         queue.erase(queue.begin());
+//         std::cout << currentNode + 1 << " "; // Wyświetlenie odwiedzonego wierzchołka
 
-        // Przetwarzanie sąsiednich wierzchołków
-        for (int neighbor = 0; neighbor < numNodes; ++neighbor)
-        {
-            if (graph[currentNode][neighbor] == 1 && !visited[neighbor])
-            {
-                queue.insert(neighbor);
-                visited[neighbor] = true;
-            }
-        }
-    }
-}
+//         // Przetwarzanie sąsiednich wierzchołków
+//         for (int neighbor = 0; neighbor < numNodes; ++neighbor)
+//         {
+//             if (graph[currentNode][neighbor] == 1 && !visited[neighbor])
+//             {
+//                 queue.insert(neighbor);
+//                 visited[neighbor] = true;
+//             }
+//         }
+//     }
+// }
