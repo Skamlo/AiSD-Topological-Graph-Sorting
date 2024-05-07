@@ -351,7 +351,7 @@ void Graph::BFS()
     int startNode = 0;
     std::cout << "start node> ";
     std::getline(std::cin, startNodeStr);
-    startNode = strToInt(startNodeStr);
+    startNode = strToInt(startNodeStr) - 1; // -1 because we start counting nodes from 1
 
     // print breath-first search
     if (graphRepresentation == "matrix")
@@ -375,7 +375,7 @@ void Graph::DFS()
     int startNode = 0;
     std::cout << "start node> ";
     std::getline(std::cin, startNodeStr);
-    startNode = strToInt(startNodeStr);
+    startNode = strToInt(startNodeStr) - 1; // -1 because we start counting nodes from 1
 
     // print depth-first search
     if (graphRepresentation == "matrix")
