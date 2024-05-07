@@ -5,15 +5,15 @@
 3. Features
     a. Wybieranie reprezentacji - DONE
         i. matrix - DONE
+        ii. list
+        iii. table
+    b. Wypisanie grafu w wybranej reprezentacji - DONE
+        i. matrix - DONE
         ii. list - DONE
         iii. table - DONE
-    b. Wypisanie grafu w wybranej reprezentacji
-        i. matrix
-        ii. list - DONE
-        iii. table
     c. Wyszukanie krawędzi
     d. Przechodzenie wszerz
     e. Przechodzenie w głąb
-3.1. Sortowanie topologiczne grafu
+3.1. Sortowanie topologiczne grafu 💀💀💀💀💀
     a. Algorytm Kahna
     b. Algorytm Tarjana

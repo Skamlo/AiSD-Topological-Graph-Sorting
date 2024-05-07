@@ -2,6 +2,7 @@
 #include <vector>
 #include <string>
 #include <random>
+#include <algorithm>
 #include "graph.h"
 #include "actions.h"
 
@@ -12,9 +13,77 @@ std::vector<std::vector<int>> createMatrix(int rows, int cols)
 }
 
 
+std::vector<int> generateUniqueNumbers(int n, int k) {
+    // Check if the range is smaller than the number of required unique numbers
+    if (k > n + 1) {
+        std::cerr << "Error: Number of unique numbers required exceeds the range." << std::endl;
+        return std::vector<int>();
+    }
+
+    // Create a vector to hold the generated numbers
+    std::vector<int> numbers(n + 1);
+    for (int i = 0; i <= n; ++i) {
+        numbers[i] = i;
+    }
+
+    // Shuffle the vector
+    std::random_device rd;
+    std::mt19937 g(rd());
+    std::shuffle(numbers.begin(), numbers.end(), g);
+
+    // Take first k elements
+    std::vector<int> result(numbers.begin(), numbers.begin() + k);
+
+    return result;
+}
+
+
 bool inputGenerate(std::vector<std::vector<int>>* graph)
 {
-    // do some magic
+    // read number of nodes in graph
+    std::string nNodesStr;
+    int nNodes = 0;
+    std::cout << "     nodes> ";
+    std::getline(std::cin, nNodesStr);
+    nNodes = strToInt(nNodesStr);
+
+    // read saturation
+    std::string saturationStr;
+    int saturation = 0;
+    std::cout << "saturation> ";
+    std::getline(std::cin, saturationStr);
+    saturation = strToInt(saturationStr);
+
+    // check if saturation is in correct range
+    if (saturation < 0 || saturation > 100)
+    {
+        std::cout << "Saturation must be between 0 and 100.\n";
+        return false;
+    }
+
+    int nNodesInUpperTriangle = nNodes * (nNodes - 1) / 2;
+    int nNodesToFill = nNodesInUpperTriangle * saturation / 100;
+
+    std::vector<int> indexes = generateUniqueNumbers(nNodesInUpperTriangle-1, nNodesToFill);
+
+    // create graph
+    *graph = createMatrix(nNodes, nNodes);
+
+    for (int i=0; i<indexes.size(); i++)
+    {
+        for (int j=0; j<nNodes-1; j++)
+        {
+            if (indexes[i] + 1 < nNodes - 1 - j)
+            {
+                (*graph)[j][j + 2 + indexes[i]] = 1;
+                break;
+            }
+            else
+            {
+                indexes[i] -= (nNodes - 1 - j);
+            }
+        }
+    }
 
     return true;
 }

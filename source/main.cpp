@@ -42,7 +42,10 @@ int main(int argc, char *argv[])
     if (inputMode == GENERATE)
     {
         if (!inputGenerate(&graph))
+        {
+            std::cout << "Graph generation failed.\n";
             return 1;
+        }
     }
     else if (inputMode == USER_PROVIDED)
     {

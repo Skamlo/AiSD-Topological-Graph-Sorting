@@ -33,3 +33,6 @@
 
 # unnecessary file
 create.sh
+
+# unnecessary folders
+.vscode
