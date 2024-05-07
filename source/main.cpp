@@ -68,17 +68,15 @@ int main(int argc, char *argv[])
         }
         else if (option == "find")
         {
+            graph.find();
         }
-        else if (option == "breath-first search" || option == "breath-first" || option == "BFS")
+        else if (option == "breath-first search" || option == "breath-first" || option == "bfs")
         {
-            // BFS(graph, 0);
+            graph.BFS();
         }
-        else if (option == "depth-first search" || option == "depth-first" || option == "DFS")
+        else if (option == "depth-first search" || option == "depth-first" || option == "dfs")
         {
-            // if (graphRepresentation == "matrix")
-            // {
-            //     DFSforMatrix(graph, 0);
-            // }
+            graph.DFS();
         }
         else if (option == "help")
         {

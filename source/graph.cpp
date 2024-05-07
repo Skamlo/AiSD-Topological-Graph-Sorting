@@ -3,6 +3,7 @@
 #include <string>
 #include <random>
 #include <algorithm>
+#include <queue>
 #include "graph.h"
 #include "actions.h"
 
@@ -280,61 +281,199 @@ void Graph::printTable()
 }
 
 
-// DFS FOR MATRIX HERE
-
-void DFSRecursive(const std::vector<std::vector<int>> &graph, std::vector<bool> &visited, int currentNode)
+void Graph::find()
 {
-    // Oznacz bieżący wierzchołek jako odwiedzony
-    visited[currentNode] = true;
-    std::cout << currentNode + 1 << " "; // Wyświetl bieżący wierzchołek
+    // read start node
+    std::string startNodeStr;
+    int startNode = 0;
+    std::cout << "  from> ";
+    std::getline(std::cin, startNodeStr);
+    startNode = strToInt(startNodeStr);
 
-    // Przeszukaj sąsiednie wierzchołki
-    for (int neighbor = 0; neighbor < graph.size(); ++neighbor)
+    // read end node
+    std::string endNodeStr;
+    int endNode = 0;
+    std::cout << "    to> ";
+    std::getline(std::cin, endNodeStr);
+    endNode = strToInt(endNodeStr);
+
+    bool exist = false;
+
+    if (graphRepresentation == "matrix")
+        exist = isEdgeExistMatrix(startNode, endNode);
+    else if (graphRepresentation == "list")
+        exist = isEdgeExistList(startNode, endNode);
+    else if (graphRepresentation == "table")
+        exist = isEdgeExistTable(startNode, endNode);
+
+    // print
+    if (exist)
     {
-        if (graph[currentNode][neighbor] == 1 && !visited[neighbor])
-        {
-            // Wywołaj rekurencyjnie DFS dla nieodwiedzonego sąsiada
-            DFSRecursive(graph, visited, neighbor);
-        }
+        std::cout << "True: edge (" << startNode << ", " << endNode << ") exists in the Graph!\n";
+    }
+    else
+    {
+        std::cout << "False: edge (" << startNode << ", " << endNode << ") does not exist in the Graph!\n";
     }
 }
 
 
-// void DFSforMatrix(std::vector<std::vector<int>> &graph, int startNode)
-// {
-//     int numNodes = graph.size();
-//     std::vector<bool> visited(numNodes, false); // Tablica odwiedzin
+bool Graph::isEdgeExistMatrix(int startNode, int endNode)
+{
+    if (matrix[startNode-1][endNode-1] == 1)
+        return true;
+    else
+        return false;
+}
 
-//     // Wywołaj DFS rekurencyjnie dla startowego wierzchołka
-//     DFSRecursive(graph, visited, startNode);
-// }
 
-// // nie jestem pewny czy to dziala
+bool Graph::isEdgeExistList(int startNode, int endNode)
+{
+    for (int i=0; i<list[startNode].size(); i++)
+    {
+        if (list[startNode][i] == endNode)
+            return true;
+    }
+    return false;
+}
 
-// void BFS(std::vector<std::vector<int>> &graph, int startNode)
-// {
-//     int numNodes = graph.size();
-//     std::vector<bool> visited(numNodes, false); // Tablica odwiedzin
-//     std::set<int> queue;                        // Zbiór do przechowywania wierzchołków
 
-//     // Rozpoczęcie BFS od startowego wierzchołka
-//     queue.insert(startNode);
-//     visited[startNode] = true;
+bool Graph::isEdgeExistTable(int startNode, int endNode)
+{
+    if (tableAlreadyCreated == false)
+    {
+        generateTable();
+    }
 
-//     while (!queue.empty())
-//     {
-//         int currentNode = *queue.begin();
-//         queue.erase(queue.begin());
-//         std::cout << currentNode + 1 << " "; // Wyświetlenie odwiedzonego wierzchołka
+    for (int i=0; i<table.size(); i++)
+    {
+        if (table[i][0] == startNode && table[i][1] == endNode)
+            return true;
+    }
 
-//         // Przetwarzanie sąsiednich wierzchołków
-//         for (int neighbor = 0; neighbor < numNodes; ++neighbor)
-//         {
-//             if (graph[currentNode][neighbor] == 1 && !visited[neighbor])
-//             {
-//                 queue.insert(neighbor);
-//                 visited[neighbor] = true;
-//             }
-//         }
-//     }
-// }
+    return false;
+}
+
+
+void Graph::BFS()
+{
+    // read starting node
+    std::string startNodeStr;
+    int startNode = 0;
+    std::cout << "start node> ";
+    std::getline(std::cin, startNodeStr);
+    startNode = strToInt(startNodeStr);
+
+    // print breath-first search
+    if (graphRepresentation == "matrix")
+    {
+        BFSmatrix(startNode);
+    }
+    else if (graphRepresentation == "list")
+    {
+        BFSlist(startNode);
+    }
+    else if (graphRepresentation == "table")
+    {
+        BFStable(startNode);
+    }
+}
+
+
+void Graph::DFS()
+{
+    // read starting node
+    std::string startNodeStr;
+    int startNode = 0;
+    std::cout << "start node> ";
+    std::getline(std::cin, startNodeStr);
+    startNode = strToInt(startNodeStr);
+
+    // print depth-first search
+    if (graphRepresentation == "matrix")
+    {
+        DFSmatrix(startNode);
+    }
+    else if (graphRepresentation == "list")
+    {
+        DFSlist(startNode);
+    }
+    else if (graphRepresentation == "table")
+    {
+        DFStable(startNode);
+    }
+}
+
+
+void Graph::DFSrecursive(std::vector<bool> &visited, int currentNode)
+{
+    // visited[currentNode] = true;
+    // std::cout << currentNode + 1 << " ";
+
+    // for (int neighbor = 0; neighbor < graph.size(); ++neighbor)
+    // {
+    //     if (graph[currentNode][neighbor] == 1 && !visited[neighbor])
+    //     {
+    //         DFSRecursive(graph, visited, neighbor);
+    //     }
+    // }
+}
+
+
+void Graph::BFSmatrix(int startNode)
+{
+    // int numNodes = graph.size();
+    // std::vector<bool> visited(numNodes, false);
+    // std::set<int> queue;
+
+    // queue.insert(startNode);
+    // visited[startNode] = true;
+
+    // while (!queue.empty())
+    // {
+    //     int currentNode = *queue.begin();
+    //     queue.erase(queue.begin());
+    //     std::cout << currentNode + 1 << " ";
+
+    //     for (int neighbor = 0; neighbor < numNodes; ++neighbor)
+    //     {
+    //         if (graph[currentNode][neighbor] == 1 && !visited[neighbor])
+    //         {
+    //             queue.insert(neighbor);
+    //             visited[neighbor] = true;
+    //         }
+    //     }
+    // }
+}
+
+
+void Graph::DFSmatrix(int startNode)
+{
+    // int nNodes = matrix.size();
+    // std::vector<bool> visited(nNodes, false);
+    // DFSRecursive(graph, visited, startNode);
+}
+
+
+void Graph::BFSlist(int startNode)
+{
+
+}
+
+
+void Graph::DFSlist(int startNode)
+{
+
+}
+
+
+void Graph::BFStable(int startNode)
+{
+
+}
+
+
+void Graph::DFStable(int startNode)
+{
+
+}
