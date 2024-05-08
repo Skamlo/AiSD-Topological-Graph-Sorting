@@ -347,11 +347,11 @@ bool Graph::isEdgeExistTable(int startNode, int endNode)
 void Graph::BFS()
 {
     // read starting node
-    std::string startNodeStr;
+    // std::string startNodeStr;
     int startNode = 0;
-    std::cout << "start node> ";
-    std::getline(std::cin, startNodeStr);
-    startNode = strToInt(startNodeStr) - 1; // -1 because we start counting nodes from 1
+    // std::cout << "start node> ";
+    // std::getline(std::cin, startNodeStr);
+    // startNode = strToInt(startNodeStr) - 1; // -1 because we start counting nodes from 1
 
     // print breath-first search
     if (graphRepresentation == "matrix")
@@ -368,14 +368,15 @@ void Graph::BFS()
     }
 }
 
+// !raczej usuniemy wybieranie noda bo to generuje potem problem niepotrzebny
 void Graph::DFS()
 {
     // read starting node
     std::string startNodeStr;
     int startNode = 0;
-    std::cout << "start node> ";
-    std::getline(std::cin, startNodeStr);
-    startNode = strToInt(startNodeStr) - 1; // -1 because we start counting nodes from 1
+    // std::cout << "start node> ";
+    // std::getline(std::cin, startNodeStr);
+    // startNode = strToInt(startNodeStr) - 1; // -1 because we start counting nodes from 1
 
     // print depth-first search
     if (graphRepresentation == "matrix")
@@ -408,45 +409,12 @@ void Graph::DFSrecursiveMatrix(std::vector<bool> &visitedNodes, int currentNode)
     }
 
     // continue even if node has no successor
-    bool hasUnvisitedNodes = false;
-    if (!hasUnvisitedNodes)
+    for (int nextNode = currentNode + 1; nextNode < matrix.size(); ++nextNode)
     {
-        for (int nextNode = currentNode + 1; nextNode < matrix.size(); ++nextNode)
+        if (!visitedNodes[nextNode])
         {
-            if (!visitedNodes[nextNode])
-            {
-                Graph::DFSrecursiveMatrix(visitedNodes, nextNode);
-                break;
-            }
-        }
-    }
-}
-
-void Graph::DFSrecursiveList(int currentNode, std::unordered_set<int> &visited) // algorithm prints out of range node
-{
-    visited.insert(currentNode);
-    std::cout << currentNode + 1 << " ";
-
-    // going through nodes
-    for (int neighbor : list[currentNode])
-    {
-        if (visited.find(neighbor) == visited.end())
-        {
-            Graph::DFSrecursiveList(neighbor, visited);
-        }
-    }
-
-    // continue even if node has no successor
-    bool hasUnvisitedNodes = false;
-    if (!hasUnvisitedNodes)
-    {
-        for (int nextNode = currentNode + 1; nextNode < matrix.size(); ++nextNode)
-        {
-            if (visited.find(nextNode) == visited.end())
-            {
-                Graph::DFSrecursiveList(nextNode, visited);
-                break;
-            }
+            Graph::DFSrecursiveMatrix(visitedNodes, nextNode);
+            break;
         }
     }
 }
@@ -458,7 +426,7 @@ void Graph::DFSmatrix(int startNode)
     Graph::DFSrecursiveMatrix(visitedNodes, startNode);
 }
 
-void Graph::BFSmatrix(int startNode) // algorithm skips some nodes
+void Graph::BFSmatrix(int startNode) // !algorithm skips some nodes
 {
     int numNodes = matrix.size();
     std::vector<bool> visitedNodes(numNodes, false);
@@ -501,7 +469,7 @@ void Graph::BFSmatrix(int startNode) // algorithm skips some nodes
 }
 
 // LIST REPRESENTATION
-void Graph::BFSlist(int startNode) // algorithm skips some nodes
+void Graph::BFSlist(int startNode) // !algorithm skips some nodes
 {
     std::queue<int> queue;
     std::unordered_set<int> visited;
@@ -542,14 +510,36 @@ void Graph::BFSlist(int startNode) // algorithm skips some nodes
     }
 }
 
+void Graph::DFSrecursiveList(int currentNode, std::unordered_set<int> &visited) //! algorithm prints out of range node
+{
+    visited.insert(currentNode);
+    std::cout << currentNode + 1 << " ";
+
+    for (int neighbor : list[currentNode])
+    {
+        if (visited.find(neighbor) == visited.end())
+        {
+            DFSrecursiveList(neighbor, visited);
+        }
+    }
+}
+
 void Graph::DFSlist(int startNode)
 {
     std::unordered_set<int> visited;
-    Graph::DFSrecursiveList(startNode, visited);
+    DFSrecursiveList(startNode, visited);
+
+    for (int i = 0; i < list.size(); ++i)
+    {
+        if (visited.find(i) == visited.end())
+        {
+            DFSrecursiveList(i, visited);
+        }
+    }
 }
 
 // TABLE REPRESENTATION
-void Graph::BFStable(int startNode)
+void Graph::BFStable(int startNode) //! algorithm skips some nodes
 {
     std::unordered_set<int> visited;
     std::queue<int> queue;
