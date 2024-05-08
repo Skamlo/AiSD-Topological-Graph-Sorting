@@ -8,6 +8,8 @@ class Graph
 {
 public:
     // VARIABLES
+    int nodesNumber = 0;
+
     std::vector<std::vector<int>> matrix;
     std::vector<std::vector<int>> list;
     std::vector<std::vector<int>> table;
@@ -25,7 +27,8 @@ public:
     bool inputUserProvided();
     void generateList();
     void generateTable();
-    void changeGraphRepresentation();
+    std::string getNewGraphRepresentation();
+    void changeGraphRepresentation(std::string newRepresentation);
 
     // printing
     void print();
@@ -54,4 +57,13 @@ public:
     /// for table representation
     void BFStable(int startNode);
     void DFStable(int startNode);
+    // khan and tarjans
+    void khanSort();
+    void khanSortMatrix();
+    void khanSortList();
+    void khanSortTable();
+    void tarjansSort();
+    void tarjansSortMatrix();
+    void tarjansSortList();
+    void tarjansSortTable();
 };

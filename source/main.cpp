@@ -64,7 +64,19 @@ int main(int argc, char *argv[])
         }
         else if (option == "type")
         {
-            graph.changeGraphRepresentation();
+            graph.changeGraphRepresentation(graph.getNewGraphRepresentation());
+        }
+        else if (option == "type matrix")
+        {
+            graph.changeGraphRepresentation("matrix");
+        }
+        else if (option == "type list")
+        {
+            graph.changeGraphRepresentation("list");
+        }
+        else if (option == "type table")
+        {
+            graph.changeGraphRepresentation("table");
         }
         else if (option == "find")
         {
@@ -78,6 +90,16 @@ int main(int argc, char *argv[])
         {
             graph.DFS();
         }
+        else if (option == "khan" || option == "khan sort" || option == "khan-sort" || option == "ks")
+        {
+            std::cout << "Topological sorting of the graph is: ";
+            graph.khanSort();
+        }
+        else if (option == "tarjans" || option == "tarjans sort" || option == "tarjans-sort" || option == "ts")
+        {
+            std::cout << "Topological sorting of the graph is: ";
+            graph.tarjansSort();
+        }
         else if (option == "help")
         {
             std::cout << "Help                  Show this message" << std::endl
@@ -86,6 +108,8 @@ int main(int argc, char *argv[])
                       << "Find                  Find graph edges" << std::endl
                       << "Breath-first search   Print nodes in Breath-first order" << std::endl
                       << "Depth-first search    Print nodes in Depth-first order" << std::endl
+                      << "Khan sort             Print nodes sorted by Khan Algorithm" << std::endl
+                      << "Tarjans sort          Print nodes sorted by Tarjan's Algorithm" << std::endl
                       << "Exit                  Exits the program" << std::endl;
         }
         else if (option == "exit")

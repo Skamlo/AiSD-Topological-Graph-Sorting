@@ -50,6 +50,7 @@ bool Graph::inputGenerate()
     std::cout << "     nodes> ";
     std::getline(std::cin, nNodesStr);
     nNodes = strToInt(nNodesStr);
+    nodesNumber = nNodes;
 
     // read saturation
     std::string saturationStr;
@@ -100,6 +101,7 @@ bool Graph::inputUserProvided()
     std::cout << "nodes> ";
     std::getline(std::cin, nNodesStr);
     nNodes = strToInt(nNodesStr);
+    nodesNumber = nNodes;
 
     // create graph
     matrix = createMatrix(nNodes, nNodes);
@@ -177,13 +179,18 @@ void Graph::generateTable()
     }
 }
 
-void Graph::changeGraphRepresentation()
+std::string Graph::getNewGraphRepresentation()
 {
     std::string newRepresentation;
     std::cout << "type> ";
     std::getline(std::cin, newRepresentation);
     newRepresentation = stringToLowercase(newRepresentation);
 
+    return newRepresentation;
+}
+
+void Graph::changeGraphRepresentation(std::string newRepresentation)
+{
     if (newRepresentation == "matrix")
     {
         graphRepresentation = "matrix";
@@ -573,4 +580,154 @@ void Graph::BFStable(int startNode) //! algorithm skips some nodes
 
 void Graph::DFStable(int startNode)
 {
+
+}
+
+void Graph::khanSort()
+{
+    if (graphRepresentation == "matrix")
+        khanSortMatrix();
+    else if (graphRepresentation == "list")
+        khanSortList();
+    else if (graphRepresentation == "table")
+        khanSortTable();
+}
+
+void Graph::khanSortMatrix()
+{
+    // Count of incoming edges for each vertex
+    std::vector<int> inDegree(nodesNumber, 0);
+    for (int i = 0; i < nodesNumber; i++) {
+        for (int j = 0; j < nodesNumber; j++) {
+            if (matrix[i][j])
+                inDegree[j]++;
+        }
+    }
+
+    // Queue for vertices with in-degree 0
+    std::queue<int> q;
+    for (int i = 0; i < nodesNumber; i++) {
+        if (inDegree[i] == 0)
+            q.push(i);
+    }
+
+    // Topological order
+    std::vector<int> topoOrder;
+    while (!q.empty()) {
+        int u = q.front();
+        q.pop();
+        topoOrder.push_back(u);
+
+        for (int v = 0; v < nodesNumber; v++) {
+            if (matrix[u][v]) {
+                inDegree[v]--;
+                if (inDegree[v] == 0)
+                    q.push(v);
+            }
+        }
+    }
+
+    // Print topological order
+    for (int i = 0; i < topoOrder.size(); i++)
+        std::cout << topoOrder[i] + 1 << " ";
+    std::cout << std::endl;
+}
+
+void Graph::khanSortList()
+{
+    // Count of incoming edges for each vertex
+    std::vector<int> inDegree(nodesNumber, 0);
+    for (int i = 0; i < nodesNumber; i++) {
+        for (int j = 0; j < list[i].size(); j++) {
+            int v = list[i][j];
+            inDegree[v]++;
+        }
+    }
+
+    // Queue for vertices with in-degree 0
+    std::queue<int> q;
+    for (int i = 0; i < nodesNumber; i++) {
+        if (inDegree[i] == 0)
+            q.push(i);
+    }
+
+    // Topological order
+    std::vector<int> topoOrder;
+    while (!q.empty()) {
+        int u = q.front();
+        q.pop();
+        topoOrder.push_back(u);
+
+        for (int j = 0; j < list[u].size(); j++) {
+            int v = list[u][j];
+            inDegree[v]--;
+            if (inDegree[v] == 0)
+                q.push(v);
+        }
+    }
+
+    // Print topological order
+    for (int i = 0; i < topoOrder.size(); i++)
+        std::cout << topoOrder[i] + 1 << " ";
+    std::cout << std::endl;
+}
+
+void Graph::khanSortTable()
+{
+    std::vector<int> inDegree(nodesNumber, 0);
+    std::vector<std::vector<int>> adjList(nodesNumber);
+
+    // Construct adjacency list
+    for (const auto& edge : table) {
+        adjList[edge[0]].push_back(edge[1]);
+        inDegree[edge[1]]++;
+    }
+
+    std::queue<int> q;
+    for (int i = 0; i < nodesNumber; ++i) {
+        if (inDegree[i] == 0)
+            q.push(i);
+    }
+
+    std::vector<int> topoOrder;
+    while (!q.empty()) {
+        int u = q.front();
+        q.pop();
+        topoOrder.push_back(u);
+
+        for (int v : adjList[u]) {
+            inDegree[v]--;
+            if (inDegree[v] == 0)
+                q.push(v);
+        }
+    }
+
+    for (int i = 0; i < topoOrder.size(); ++i)
+        std::cout << topoOrder[i] + 1 << " ";
+    std::cout << std::endl;
+}
+
+void Graph::tarjansSort()
+{
+    if (graphRepresentation == "matrix")
+        tarjansSortMatrix();
+    else if (graphRepresentation == "list")
+        tarjansSortList();
+    else if (graphRepresentation == "table")
+        tarjansSortTable();
+}
+
+void Graph::tarjansSortMatrix()
+{
+    // do some magic
+}
+
+void Graph::tarjansSortList()
+{
+    // do some magic
+}
+
+void Graph::tarjansSortTable()
+{
+    // do some magic
 }
