@@ -353,12 +353,7 @@ bool Graph::isEdgeExistTable(int startNode, int endNode)
 
 void Graph::BFS()
 {
-    // read starting node
-    // std::string startNodeStr;
     int startNode = 0;
-    // std::cout << "start node> ";
-    // std::getline(std::cin, startNodeStr);
-    // startNode = strToInt(startNodeStr) - 1; // -1 because we start counting nodes from 1
 
     // print breath-first search
     if (graphRepresentation == "matrix")
@@ -375,15 +370,9 @@ void Graph::BFS()
     }
 }
 
-// !raczej usuniemy wybieranie noda bo to generuje potem problem niepotrzebny
 void Graph::DFS()
 {
-    // read starting node
-    std::string startNodeStr;
     int startNode = 0;
-    // std::cout << "start node> ";
-    // std::getline(std::cin, startNodeStr);
-    // startNode = strToInt(startNodeStr) - 1; // -1 because we start counting nodes from 1
 
     // print depth-first search
     if (graphRepresentation == "matrix")
@@ -401,7 +390,7 @@ void Graph::DFS()
 }
 
 // MATRIX REPRESENTATION
-void Graph::DFSrecursiveMatrix(std::vector<bool> &visitedNodes, int currentNode)
+void Graph::DFSrecursiveMatrix(std::vector<bool> &visitedNodes, int currentNode) //* DONE
 {
     visitedNodes[currentNode] = true;
     std::cout << currentNode + 1 << " ";
@@ -426,63 +415,21 @@ void Graph::DFSrecursiveMatrix(std::vector<bool> &visitedNodes, int currentNode)
     }
 }
 
-void Graph::DFSmatrix(int startNode)
+void Graph::DFSmatrix(int startNode) //* DONE
 {
     int nNodes = matrix.size();
     std::vector<bool> visitedNodes(nNodes, false);
     Graph::DFSrecursiveMatrix(visitedNodes, startNode);
 }
 
-void Graph::BFSmatrix(int startNode) // !algorithm skips some nodes
+void Graph::BFSmatrix(int startNode) //* DONE
 {
     int numNodes = matrix.size();
-    std::vector<bool> visitedNodes(numNodes, false);
-    std::set<int> queue;
-
-    queue.insert(startNode);
-    visitedNodes[startNode] = true;
-
-    while (!queue.empty())
-    {
-        int currentNode = *queue.begin();
-        queue.erase(queue.begin());
-        std::cout << currentNode + 1 << " ";
-
-        bool hasUnvisitedNodes = false;
-
-        for (int neighbor = 0; neighbor < numNodes; ++neighbor)
-        {
-            if (matrix[currentNode][neighbor] == 1 && !visitedNodes[neighbor])
-            {
-                queue.insert(neighbor);
-                visitedNodes[neighbor] = true;
-                hasUnvisitedNodes = true;
-            }
-        }
-
-        if (!hasUnvisitedNodes)
-        {
-            for (int nextNode = currentNode + 1; nextNode < numNodes; ++nextNode)
-            {
-                if (!visitedNodes[nextNode])
-                {
-                    queue.insert(nextNode);
-                    visitedNodes[nextNode] = true;
-                    break;
-                }
-            }
-        }
-    }
-}
-
-// LIST REPRESENTATION
-void Graph::BFSlist(int startNode) // !algorithm skips some nodes
-{
+    std::vector<bool> visited(numNodes, false);
     std::queue<int> queue;
-    std::unordered_set<int> visited;
 
     queue.push(startNode);
-    visited.insert(startNode);
+    visited[startNode] = true;
 
     while (!queue.empty())
     {
@@ -490,89 +437,173 @@ void Graph::BFSlist(int startNode) // !algorithm skips some nodes
         queue.pop();
         std::cout << currentNode + 1 << " ";
 
-        bool hasUnvisitedNodes = false;
+        // Traverse all nodes, not just neighbors of the current node
+        for (int neighbor = 0; neighbor < numNodes; ++neighbor)
+        {
+            if (matrix[currentNode][neighbor] == 1 && !visited[neighbor])
+            {
+                queue.push(neighbor);
+                visited[neighbor] = true;
+            }
+        }
+    }
+
+    // Handle unconnected nodes
+    for (int i = 0; i < numNodes; ++i)
+    {
+        if (!visited[i])
+        {
+            queue.push(i);
+            visited[i] = true;
+            while (!queue.empty())
+            {
+                int currentNode = queue.front();
+                queue.pop();
+                std::cout << currentNode + 1 << " ";
+                for (int neighbor = 0; neighbor < numNodes; ++neighbor)
+                {
+                    if (matrix[currentNode][neighbor] == 1 && !visited[neighbor])
+                    {
+                        queue.push(neighbor);
+                        visited[neighbor] = true;
+                    }
+                }
+            }
+        }
+    }
+}
+// LIST REPRESENTATION
+void Graph::BFSlist(int startNode)
+{
+    std::vector<bool> visited(nodesNumber, false);
+    std::queue<int> queue;
+
+    queue.push(startNode);
+    visited[startNode] = true;
+
+    while (!queue.empty())
+    {
+        int currentNode = queue.front();
+        queue.pop();
+
+        std::cout << currentNode + 1 << " ";
 
         for (int neighbor : list[currentNode])
         {
-            if (visited.find(neighbor) == visited.end())
+            if (!visited[neighbor - 1])
             {
-                queue.push(neighbor);
-                visited.insert(neighbor);
-                hasUnvisitedNodes = true;
+                queue.push(neighbor - 1);
+                visited[neighbor - 1] = true;
             }
         }
+    }
 
-        if (!hasUnvisitedNodes)
+    // Handle unconnected nodes (if any)
+    for (int i = 0; i < nodesNumber; ++i)
+    {
+        if (!visited[i])
         {
-            for (int nextNode = currentNode + 1; nextNode < matrix.size(); ++nextNode)
+            queue.push(i);
+            visited[i] = true;
+            while (!queue.empty())
             {
-                if (visited.find(nextNode) == visited.end())
+                int currentNode = queue.front();
+                queue.pop();
+                std::cout << currentNode + 1 << " ";
+                for (int neighbor : list[currentNode])
                 {
-                    queue.push(nextNode);
-                    visited.insert(nextNode);
-                    break;
+                    if (!visited[neighbor - 1])
+                    {
+                        queue.push(neighbor - 1);
+                        visited[neighbor - 1] = true;
+                    }
                 }
             }
         }
     }
 }
 
-void Graph::DFSrecursiveList(int currentNode, std::unordered_set<int> &visited) //! algorithm prints out of range node
+void Graph::DFSrecursiveList(std::vector<bool> &visited, int currentNode)
 {
-    visited.insert(currentNode);
+    visited[currentNode] = true;
     std::cout << currentNode + 1 << " ";
 
-    for (int neighbor : list[currentNode])
+    for (int i = 0; i < list[currentNode].size(); ++i)
     {
-        if (visited.find(neighbor) == visited.end())
+        int neighbor = list[currentNode][i] - 1;
+        if (!visited[neighbor])
         {
-            DFSrecursiveList(neighbor, visited);
+            DFSrecursiveList(visited, neighbor);
         }
     }
 }
 
 void Graph::DFSlist(int startNode)
 {
-    std::unordered_set<int> visited;
-    DFSrecursiveList(startNode, visited);
+    std::vector<bool> visited(nodesNumber, false);
 
-    for (int i = 0; i < list.size(); ++i)
+    for (int i = 0; i < nodesNumber; ++i)
     {
-        if (visited.find(i) == visited.end())
+        if (!visited[i])
         {
-            DFSrecursiveList(i, visited);
+            DFSrecursiveList(visited, i);
+        }
+    }
+    std::cout << std::endl;
+}
+
+// TABLE REPRESENTATION
+void Graph::BFStable(int startNode)
+{
+    std::vector<bool> visited(nodesNumber, false);
+    std::queue<int> queue;
+
+    for (int i = 0; i < table.size(); ++i)
+    {
+        int startNode = table[i][0];
+        int endNode = table[i][1];
+
+        if (!visited[startNode - 1])
+        {
+            visited[startNode - 1] = true;
+            queue.push(startNode - 1);
+
+            while (!queue.empty())
+            {
+                int currentNode = queue.front();
+                queue.pop();
+                std::cout << currentNode + 1 << " ";
+
+                for (int j = 0; j < table.size(); ++j)
+                {
+                    if (table[j][0] == currentNode + 1)
+                    {
+                        int neighbor = table[j][1];
+                        if (!visited[neighbor - 1])
+                        {
+                            visited[neighbor - 1] = true;
+                            queue.push(neighbor - 1);
+                        }
+                    }
+                }
+            }
         }
     }
 }
 
-// TABLE REPRESENTATION
-void Graph::BFStable(int startNode) //! algorithm skips some nodes
+void Graph::DFSrecursiveTable(std::vector<bool> &visited, int currentNode)
 {
-    std::unordered_set<int> visited;
-    std::queue<int> queue;
+    visited[currentNode] = true;
+    std::cout << currentNode + 1 << " ";
 
-    queue.push(startNode);
-    visited.insert(startNode);
-
-    while (!queue.empty())
+    for (int i = 0; i < table.size(); ++i)
     {
-        int currentNode = queue.front();
-        queue.pop();
-        std::cout << currentNode + 1 << " ";
-
-        for (const auto &edge : table)
+        if (table[i][0] == currentNode + 1)
         {
-            int u = edge[0];
-            int v = edge[1];
-            if (u == currentNode && visited.find(v) == visited.end())
+            int neighbor = table[i][1];
+            if (!visited[neighbor - 1])
             {
-                queue.push(v);
-                visited.insert(v);
-            }
-            else if (v == currentNode && visited.find(u) == visited.end())
-            {
-                queue.push(u);
-                visited.insert(u);
+                DFSrecursiveTable(visited, neighbor - 1);
             }
         }
     }
@@ -580,7 +611,16 @@ void Graph::BFStable(int startNode) //! algorithm skips some nodes
 
 void Graph::DFStable(int startNode)
 {
+    std::vector<bool> visited(nodesNumber, false);
 
+    for (int i = 0; i < table.size(); ++i)
+    {
+        int startNode = table[i][0];
+        if (!visited[startNode - 1])
+        {
+            DFSrecursiveTable(visited, startNode - 1);
+        }
+    }
 }
 
 void Graph::khanSort()
@@ -597,8 +637,10 @@ void Graph::khanSortMatrix()
 {
     // Count of incoming edges for each vertex
     std::vector<int> inDegree(nodesNumber, 0);
-    for (int i = 0; i < nodesNumber; i++) {
-        for (int j = 0; j < nodesNumber; j++) {
+    for (int i = 0; i < nodesNumber; i++)
+    {
+        for (int j = 0; j < nodesNumber; j++)
+        {
             if (matrix[i][j])
                 inDegree[j]++;
         }
@@ -606,20 +648,24 @@ void Graph::khanSortMatrix()
 
     // Queue for vertices with in-degree 0
     std::queue<int> q;
-    for (int i = 0; i < nodesNumber; i++) {
+    for (int i = 0; i < nodesNumber; i++)
+    {
         if (inDegree[i] == 0)
             q.push(i);
     }
 
     // Topological order
     std::vector<int> topoOrder;
-    while (!q.empty()) {
+    while (!q.empty())
+    {
         int u = q.front();
         q.pop();
         topoOrder.push_back(u);
 
-        for (int v = 0; v < nodesNumber; v++) {
-            if (matrix[u][v]) {
+        for (int v = 0; v < nodesNumber; v++)
+        {
+            if (matrix[u][v])
+            {
                 inDegree[v]--;
                 if (inDegree[v] == 0)
                     q.push(v);
@@ -637,8 +683,10 @@ void Graph::khanSortList()
 {
     // Count of incoming edges for each vertex
     std::vector<int> inDegree(nodesNumber, 0);
-    for (int i = 0; i < nodesNumber; i++) {
-        for (int j = 0; j < list[i].size(); j++) {
+    for (int i = 0; i < nodesNumber; i++)
+    {
+        for (int j = 0; j < list[i].size(); j++)
+        {
             int v = list[i][j];
             inDegree[v]++;
         }
@@ -646,19 +694,22 @@ void Graph::khanSortList()
 
     // Queue for vertices with in-degree 0
     std::queue<int> q;
-    for (int i = 0; i < nodesNumber; i++) {
+    for (int i = 0; i < nodesNumber; i++)
+    {
         if (inDegree[i] == 0)
             q.push(i);
     }
 
     // Topological order
     std::vector<int> topoOrder;
-    while (!q.empty()) {
+    while (!q.empty())
+    {
         int u = q.front();
         q.pop();
         topoOrder.push_back(u);
 
-        for (int j = 0; j < list[u].size(); j++) {
+        for (int j = 0; j < list[u].size(); j++)
+        {
             int v = list[u][j];
             inDegree[v]--;
             if (inDegree[v] == 0)
@@ -678,24 +729,28 @@ void Graph::khanSortTable()
     std::vector<std::vector<int>> adjList(nodesNumber);
 
     // Construct adjacency list
-    for (const auto& edge : table) {
+    for (const auto &edge : table)
+    {
         adjList[edge[0]].push_back(edge[1]);
         inDegree[edge[1]]++;
     }
 
     std::queue<int> q;
-    for (int i = 0; i < nodesNumber; ++i) {
+    for (int i = 0; i < nodesNumber; ++i)
+    {
         if (inDegree[i] == 0)
             q.push(i);
     }
 
     std::vector<int> topoOrder;
-    while (!q.empty()) {
+    while (!q.empty())
+    {
         int u = q.front();
         q.pop();
         topoOrder.push_back(u);
 
-        for (int v : adjList[u]) {
+        for (int v : adjList[u])
+        {
             inDegree[v]--;
             if (inDegree[v] == 0)
                 q.push(v);

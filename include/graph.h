@@ -53,9 +53,10 @@ public:
     /// for list representation
     void BFSlist(int startNode);
     void DFSlist(int startNode);
-    void DFSrecursiveList(int currentNode, std::unordered_set<int> &visited);
+    void DFSrecursiveList(std::vector<bool> &visited, int currentNode);
     /// for table representation
     void BFStable(int startNode);
+    void DFSrecursiveTable(std::vector<bool> &visited, int currentNode);
     void DFStable(int startNode);
     // khan and tarjans
     void khanSort();
