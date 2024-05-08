@@ -406,9 +406,23 @@ void Graph::DFSrecursiveMatrix(std::vector<bool> &visitedNodes, int currentNode)
             Graph::DFSrecursiveMatrix(visitedNodes, neighbor);
         }
     }
+
+    // continue even if node has no successor
+    bool hasUnvisitedNodes = false;
+    if (!hasUnvisitedNodes)
+    {
+        for (int nextNode = currentNode + 1; nextNode < matrix.size(); ++nextNode)
+        {
+            if (!visitedNodes[nextNode])
+            {
+                Graph::DFSrecursiveMatrix(visitedNodes, nextNode);
+                break;
+            }
+        }
+    }
 }
 
-void Graph::DFSrecursiveList(int currentNode, std::unordered_set<int> &visited)
+void Graph::DFSrecursiveList(int currentNode, std::unordered_set<int> &visited) // algorithm prints out of range node
 {
     visited.insert(currentNode);
     std::cout << currentNode + 1 << " ";
@@ -421,6 +435,20 @@ void Graph::DFSrecursiveList(int currentNode, std::unordered_set<int> &visited)
             Graph::DFSrecursiveList(neighbor, visited);
         }
     }
+
+    // continue even if node has no successor
+    bool hasUnvisitedNodes = false;
+    if (!hasUnvisitedNodes)
+    {
+        for (int nextNode = currentNode + 1; nextNode < matrix.size(); ++nextNode)
+        {
+            if (visited.find(nextNode) == visited.end())
+            {
+                Graph::DFSrecursiveList(nextNode, visited);
+                break;
+            }
+        }
+    }
 }
 
 void Graph::DFSmatrix(int startNode)
@@ -430,7 +458,7 @@ void Graph::DFSmatrix(int startNode)
     Graph::DFSrecursiveMatrix(visitedNodes, startNode);
 }
 
-void Graph::BFSmatrix(int startNode)
+void Graph::BFSmatrix(int startNode) // algorithm skips some nodes
 {
     int numNodes = matrix.size();
     std::vector<bool> visitedNodes(numNodes, false);
@@ -445,19 +473,35 @@ void Graph::BFSmatrix(int startNode)
         queue.erase(queue.begin());
         std::cout << currentNode + 1 << " ";
 
+        bool hasUnvisitedNodes = false;
+
         for (int neighbor = 0; neighbor < numNodes; ++neighbor)
         {
             if (matrix[currentNode][neighbor] == 1 && !visitedNodes[neighbor])
             {
                 queue.insert(neighbor);
                 visitedNodes[neighbor] = true;
+                hasUnvisitedNodes = true;
+            }
+        }
+
+        if (!hasUnvisitedNodes)
+        {
+            for (int nextNode = currentNode + 1; nextNode < numNodes; ++nextNode)
+            {
+                if (!visitedNodes[nextNode])
+                {
+                    queue.insert(nextNode);
+                    visitedNodes[nextNode] = true;
+                    break;
+                }
             }
         }
     }
 }
 
 // LIST REPRESENTATION
-void Graph::BFSlist(int startNode)
+void Graph::BFSlist(int startNode) // algorithm skips some nodes
 {
     std::queue<int> queue;
     std::unordered_set<int> visited;
@@ -471,12 +515,28 @@ void Graph::BFSlist(int startNode)
         queue.pop();
         std::cout << currentNode + 1 << " ";
 
+        bool hasUnvisitedNodes = false;
+
         for (int neighbor : list[currentNode])
         {
             if (visited.find(neighbor) == visited.end())
             {
                 queue.push(neighbor);
                 visited.insert(neighbor);
+                hasUnvisitedNodes = true;
+            }
+        }
+
+        if (!hasUnvisitedNodes)
+        {
+            for (int nextNode = currentNode + 1; nextNode < matrix.size(); ++nextNode)
+            {
+                if (visited.find(nextNode) == visited.end())
+                {
+                    queue.push(nextNode);
+                    visited.insert(nextNode);
+                    break;
+                }
             }
         }
     }
@@ -491,6 +551,34 @@ void Graph::DFSlist(int startNode)
 // TABLE REPRESENTATION
 void Graph::BFStable(int startNode)
 {
+    std::unordered_set<int> visited;
+    std::queue<int> queue;
+
+    queue.push(startNode);
+    visited.insert(startNode);
+
+    while (!queue.empty())
+    {
+        int currentNode = queue.front();
+        queue.pop();
+        std::cout << currentNode + 1 << " ";
+
+        for (const auto &edge : table)
+        {
+            int u = edge[0];
+            int v = edge[1];
+            if (u == currentNode && visited.find(v) == visited.end())
+            {
+                queue.push(v);
+                visited.insert(v);
+            }
+            else if (v == currentNode && visited.find(u) == visited.end())
+            {
+                queue.push(u);
+                visited.insert(u);
+            }
+        }
+    }
 }
 
 void Graph::DFStable(int startNode)
