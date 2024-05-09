@@ -63,6 +63,7 @@ public:
     void khanSortMatrix();
     void khanSortList();
     void khanSortTable();
+    void dfsTarjansSort(int u, std::vector<bool>& visited, std::stack<int>& stack);
     void tarjansSort();
     void tarjansSortMatrix();
     void tarjansSortList();

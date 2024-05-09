@@ -772,9 +772,33 @@ void Graph::tarjansSort()
         tarjansSortTable();
 }
 
+void Graph::dfsTarjansSort(int u, std::vector<bool>& visited, std::stack<int>& stack)
+{
+    visited[u] = true;
+
+    for (int v = 0; v < nodesNumber; ++v) {
+        if (matrix[u][v] && !visited[v])
+            dfsTarjansSort(v, visited, stack);
+    }
+
+    stack.push(u);
+}
+
 void Graph::tarjansSortMatrix()
 {
-    // do some magic
+    std::vector<bool> visited(nodesNumber, false);
+    std::stack<int> stack;
+
+    for (int i = 0; i < nodesNumber; ++i) {
+        if (!visited[i])
+            dfsTarjansSort(i, visited, stack);
+    }
+
+    while (!stack.empty()) {
+        std::cout << stack.top() + 1 << " ";
+        stack.pop();
+    }
+    std::cout << std::endl;
 }
 
 void Graph::tarjansSortList()
