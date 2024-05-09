@@ -561,7 +561,7 @@ void Graph::BFStable(int startNode)
     for (int i = 0; i < table.size(); ++i)
     {
         int startNode = table[i][0];
-        int endNode = table[i][1];
+        // int endNode = table[i][1];
 
         if (!visited[startNode - 1])
         {
@@ -765,18 +765,26 @@ void Graph::khanSortTable()
 void Graph::tarjansSort()
 {
     if (graphRepresentation == "matrix")
+    {
         tarjansSortMatrix();
+    }
     else if (graphRepresentation == "list")
+    {
         tarjansSortList();
+    }
     else if (graphRepresentation == "table")
-        tarjansSortTable();
+    {
+        //! seg fault
+        // tarjansSortTable();
+    }
 }
 
-void Graph::dfsTarjansSort(int u, std::vector<bool>& visited, std::stack<int>& stack)
+void Graph::dfsTarjansSort(int u, std::vector<bool> &visited, std::stack<int> &stack)
 {
     visited[u] = true;
 
-    for (int v = 0; v < nodesNumber; ++v) {
+    for (int v = 0; v < nodesNumber; ++v)
+    {
         if (matrix[u][v] && !visited[v])
             dfsTarjansSort(v, visited, stack);
     }
@@ -784,17 +792,69 @@ void Graph::dfsTarjansSort(int u, std::vector<bool>& visited, std::stack<int>& s
     stack.push(u);
 }
 
+void Graph::dfsTarjansSortList(int u, std::vector<bool> &visited, std::vector<std::vector<int>> &adjacencyList, std::stack<int> &stack)
+{
+    visited[u] = true;
+
+    for (int v : adjacencyList[u])
+    {
+        int neighbor = v - 1;
+        if (!visited[v])
+            dfsTarjansSortList(neighbor, visited, list, stack);
+    }
+
+    stack.push(u);
+}
+
+void Graph::dfsTarjanSortTable(int u, std::vector<int> &low, std::vector<int> &index, std::vector<bool> &onStack, std::stack<int> &stack)
+{
+    static int currentIndex = 0;
+    index[u - 1] = currentIndex;
+    low[u - 1] = currentIndex;
+    currentIndex++;
+    stack.push(u);
+    onStack[u - 1] = true;
+
+    for (int v : table[u])
+    {
+        int neighbor = v - 1;
+        if (index[neighbor] == -1)
+        {
+            dfsTarjanSortTable(neighbor + 1, low, index, onStack, stack); // Wywołanie dla wierzchołka neighbor
+            low[u - 1] = std::min(low[u - 1], low[neighbor]);
+        }
+        else if (onStack[neighbor])
+        {
+            low[u - 1] = std::min(low[u - 1], index[neighbor]);
+        }
+    }
+
+    if (low[u - 1] == index[u - 1])
+    {
+        while (true)
+        {
+            int v = stack.top();
+            stack.pop();
+            onStack[v - 1] = false;
+            if (v == u)
+                break;
+        }
+    }
+}
+
 void Graph::tarjansSortMatrix()
 {
     std::vector<bool> visited(nodesNumber, false);
     std::stack<int> stack;
 
-    for (int i = 0; i < nodesNumber; ++i) {
+    for (int i = 0; i < nodesNumber; ++i)
+    {
         if (!visited[i])
             dfsTarjansSort(i, visited, stack);
     }
 
-    while (!stack.empty()) {
+    while (!stack.empty())
+    {
         std::cout << stack.top() + 1 << " ";
         stack.pop();
     }
@@ -803,10 +863,34 @@ void Graph::tarjansSortMatrix()
 
 void Graph::tarjansSortList()
 {
-    // do some magic
+    std::vector<bool> visited(nodesNumber, false);
+    std::stack<int> stack;
+
+    for (int i = 0; i < nodesNumber; ++i)
+    {
+        if (!visited[i])
+            dfsTarjansSortList(i, visited, list, stack);
+    }
+
+    while (!stack.empty())
+    {
+        std::cout << stack.top() + 1 << " ";
+        stack.pop();
+    }
 }
 
 void Graph::tarjansSortTable()
 {
-    // do some magic
+    std::vector<int> low(nodesNumber, -1);
+    std::vector<int> index(nodesNumber, -1);
+    std::vector<bool> onStack(nodesNumber, false);
+    std::stack<int> stack;
+
+    for (int i = 0; i < nodesNumber; ++i)
+    {
+        if (index[i] == -1)
+        {
+            dfsTarjanSortTable(i, low, index, onStack, stack);
+        }
+    }
 }
