@@ -23,6 +23,7 @@ public:
     // graphs creating
     std::vector<std::vector<int>> createMatrix(int rows, int cols);
     std::vector<int> generateUniqueNumbers(int n, int k);
+    bool checkNums(std::string s);
     bool inputGenerate();
     bool inputUserProvided();
     void generateList();

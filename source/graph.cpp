@@ -42,6 +42,20 @@ std::vector<int> Graph::generateUniqueNumbers(int n, int k)
     return result;
 }
 
+bool Graph::checkNums(std::string s)
+{
+    bool isAll = true;
+
+    for (auto c : s)
+    {
+        if (!(c >= '0' && c <= '9'))
+        {
+            isAll = false;
+        }
+    }
+    return isAll;
+}
+
 bool Graph::inputGenerate()
 {
     // read number of nodes in graph
@@ -49,6 +63,8 @@ bool Graph::inputGenerate()
     int nNodes = 0;
     std::cout << "     nodes> ";
     std::getline(std::cin, nNodesStr);
+    if (!checkNums(nNodesStr))
+        return false;
     nNodes = strToInt(nNodesStr);
     nodesNumber = nNodes;
 
@@ -57,6 +73,8 @@ bool Graph::inputGenerate()
     int saturation = 0;
     std::cout << "saturation> ";
     std::getline(std::cin, saturationStr);
+    if (!checkNums(saturationStr))
+        return false;
     saturation = strToInt(saturationStr);
 
     // check if saturation is in correct range
@@ -100,6 +118,8 @@ bool Graph::inputUserProvided()
     int nNodes = 0;
     std::cout << "nodes> ";
     std::getline(std::cin, nNodesStr);
+    if (!checkNums(nNodesStr))
+        return false;
     nNodes = strToInt(nNodesStr);
     nodesNumber = nNodes;
 
@@ -254,7 +274,11 @@ void Graph::printMatrix()
         std::cout << i + 1 << " |";
         for (int j = 0; j < matrix.size(); j++)
         {
-            std::cout << " " << matrix[i][j];
+            for (int s = 0; s < countDigits(j + 1); s++)
+            {
+                std::cout << " ";
+            }
+            std::cout << matrix[i][j];
         }
         std::cout << "\n";
     }
@@ -299,21 +323,28 @@ void Graph::find()
 
     bool exist = false;
 
-    if (graphRepresentation == "matrix")
-        exist = isEdgeExistMatrix(startNode, endNode);
-    else if (graphRepresentation == "list")
-        exist = isEdgeExistList(startNode, endNode);
-    else if (graphRepresentation == "table")
-        exist = isEdgeExistTable(startNode, endNode);
-
-    // print
-    if (exist)
+    if (startNode <= 0 || startNode > nodesNumber || endNode <= 0 || endNode > nodesNumber)
     {
-        std::cout << "True: edge (" << startNode << ", " << endNode << ") exists in the Graph!\n";
+        std::cout << "Edge not exist in the Graph!\n";
     }
     else
     {
-        std::cout << "False: edge (" << startNode << ", " << endNode << ") does not exist in the Graph!\n";
+        if (graphRepresentation == "matrix")
+            exist = isEdgeExistMatrix(startNode, endNode);
+        else if (graphRepresentation == "list")
+            exist = isEdgeExistList(startNode, endNode);
+        else if (graphRepresentation == "table")
+            exist = isEdgeExistTable(startNode, endNode);
+
+        // print
+        if (exist)
+        {
+            std::cout << "True: edge (" << startNode << ", " << endNode << ") exists in the Graph!\n";
+        }
+        else
+        {
+            std::cout << "False: edge (" << startNode << ", " << endNode << ") does not exist in the Graph!\n";
+        }
     }
 }
 
@@ -820,7 +851,7 @@ void Graph::dfsTarjanSortTable(int u, std::vector<int> &low, std::vector<int> &i
         int neighbor = v - 1;
         if (index[neighbor] == -1)
         {
-            dfsTarjanSortTable(neighbor + 1, low, index, onStack, stack); // Wywołanie dla wierzchołka neighbor
+            dfsTarjanSortTable(neighbor + 1, low, index, onStack, stack);
             low[u - 1] = std::min(low[u - 1], low[neighbor]);
         }
         else if (onStack[neighbor])
