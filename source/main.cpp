@@ -100,6 +100,10 @@ int main(int argc, char *argv[])
             std::cout << "Topological sorting of the graph is: ";
             graph.tarjansSort();
         }
+        else if (option == "export")
+        {
+            graph.exportToTiKZ();
+        }
         else if (option == "help")
         {
             std::cout << "Help                  Show this message" << std::endl

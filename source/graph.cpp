@@ -978,3 +978,37 @@ void Graph::tarjansSortTable()
     }
     std::cout << std::endl;
 }
+
+void Graph::exportToTiKZ()
+{
+    int nodeCount = matrix.size();
+
+    // Opening TikZ environment with graphdrawing library
+    std::cout << "\\begin{tikzpicture}[>=stealth, vertex/.style={circle, draw, minimum size=17pt, inner sep=0pt}]" << std::endl;
+    std::cout << "\\usegdlibrary{spring}" << std::endl; // Include graphdrawing library with spring layout
+
+    // Define vertices
+    std::cout << "  \\graph[spring layout, node distance=1.5cm, nodes={vertex}]{ " << std::endl;
+
+    // Print vertices
+    for (int i = 0; i < nodeCount; ++i)
+    {
+        std::cout << "    " << i + 1 << " [" << i + 1 << "];" << std::endl;
+    }
+
+    // Print edges
+    for (int i = 0; i < nodeCount; ++i)
+    {
+        for (int j = 0; j < nodeCount; ++j)
+        {
+            if (matrix[i][j] == 1 && j > i) // Avoid printing edges twice
+            {
+                std::cout << "    " << i + 1 << " -> " << j + 1 << ";" << std::endl;
+            }
+        }
+    }
+
+    // Closing TikZ environment
+    std::cout << "  };" << std::endl;
+    std::cout << "\\end{tikzpicture}" << std::endl;
+}

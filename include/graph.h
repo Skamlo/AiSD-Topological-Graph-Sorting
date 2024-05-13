@@ -9,6 +9,7 @@ class Graph
 public:
     // VARIABLES
     int nodesNumber = 0;
+
     std::vector<std::vector<int>> matrix;
     std::vector<std::vector<int>> list;
     std::vector<std::vector<int>> table;
@@ -70,4 +71,6 @@ public:
     void tarjansSortMatrix();
     void tarjansSortList();
     void tarjansSortTable();
+
+    void exportToTiKZ();
 };
