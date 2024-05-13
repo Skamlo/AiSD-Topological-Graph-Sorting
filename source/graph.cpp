@@ -10,6 +10,9 @@
 #include "graph.h"
 #include "actions.h"
 
+#include <chrono>
+#include <fstream>
+
 std::vector<std::vector<int>> Graph::createMatrix(int rows, int cols)
 {
     return std::vector<std::vector<int>>(rows, std::vector<int>(cols));
@@ -323,6 +326,9 @@ void Graph::find()
 
     bool exist = false;
 
+    std::ofstream outputFile{"output.csv", std::ios_base::app};
+    const auto start{std::chrono::high_resolution_clock::now()};
+
     if (startNode <= 0 || startNode > nodesNumber || endNode <= 0 || endNode > nodesNumber)
     {
         std::cout << "Edge not exist in the Graph!\n";
@@ -346,6 +352,12 @@ void Graph::find()
             std::cout << "False: edge (" << startNode << ", " << endNode << ") does not exist in the Graph!\n";
         }
     }
+    const auto end{std::chrono::high_resolution_clock::now()};
+    auto measureTime = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+
+    outputFile << measureTime.count() << " find " << nodesNumber << " " << graphRepresentation << std::endl;
+    outputFile.flush();
+    outputFile.close();
 }
 
 bool Graph::isEdgeExistMatrix(int startNode, int endNode)
@@ -656,12 +668,26 @@ void Graph::DFStable(int startNode)
 
 void Graph::khanSort()
 {
+    std::ofstream outputFile{"output.csv", std::ios_base::app};
+    const auto start{std::chrono::high_resolution_clock::now()};
     if (graphRepresentation == "matrix")
+    {
         khanSortMatrix();
+    }
     else if (graphRepresentation == "list")
+    {
         khanSortList();
+    }
     else if (graphRepresentation == "table")
+    {
         khanSortTable();
+    }
+    const auto end{std::chrono::high_resolution_clock::now()};
+    auto measureTime = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+
+    outputFile << measureTime.count() << " khan " << nodesNumber << " " << graphRepresentation << std::endl;
+    outputFile.flush();
+    outputFile.close();
 }
 
 void Graph::khanSortMatrix()
@@ -713,7 +739,9 @@ void Graph::khanSortMatrix()
 void Graph::khanSortList()
 {
     // Count of incoming edges for each vertex
-    std::vector<int> inDegree(nodesNumber, 0);
+    std::vector<int> inDegree(nodesNumber + 1, 0); // Increase size by 1
+
+    // Update loop to start from 0 and end at nodesNumber
     for (int i = 0; i < nodesNumber; i++)
     {
         for (int j = 0; j < list[i].size(); j++)
@@ -727,8 +755,8 @@ void Graph::khanSortList()
     std::queue<int> q;
     for (int i = 0; i < nodesNumber; i++)
     {
-        if (inDegree[i] == 0)
-            q.push(i);
+        if (inDegree[i + 1] == 0) // Adjusted index
+            q.push(i + 1);        // Adjusted index
     }
 
     // Topological order
@@ -739,9 +767,9 @@ void Graph::khanSortList()
         q.pop();
         topoOrder.push_back(u);
 
-        for (int j = 0; j < list[u].size(); j++)
+        for (int j = 0; j < list[u - 1].size(); j++) // Adjusted index
         {
-            int v = list[u][j];
+            int v = list[u - 1][j];
             inDegree[v]--;
             if (inDegree[v] == 0)
                 q.push(v);
@@ -750,24 +778,24 @@ void Graph::khanSortList()
 
     // Print topological order
     for (int i = 0; i < topoOrder.size(); i++)
-        std::cout << topoOrder[i] + 1 << " ";
+        std::cout << topoOrder[i] << " ";
     std::cout << std::endl;
 }
 
 void Graph::khanSortTable()
 {
-    std::vector<int> inDegree(nodesNumber, 0);
-    std::vector<std::vector<int>> adjList(nodesNumber);
+    std::vector<int> inDegree(nodesNumber + 1, 0);
+    std::vector<std::vector<int>> adjList(nodesNumber + 1);
 
     // Construct adjacency list
     for (const auto &edge : table)
     {
-        adjList[edge[0]].push_back(edge[1]);
-        inDegree[edge[1]]++;
+        adjList[edge[0]].push_back(edge[1] + 1);
+        inDegree[edge[1] + 1]++;
     }
 
     std::queue<int> q;
-    for (int i = 0; i < nodesNumber; ++i)
+    for (int i = 1; i <= nodesNumber; ++i)
     {
         if (inDegree[i] == 0)
             q.push(i);
@@ -788,13 +816,22 @@ void Graph::khanSortTable()
         }
     }
 
+    // Check for remaining unvisited nodes
+    for (int i = 1; i <= nodesNumber; ++i)
+    {
+        if (inDegree[i] != 0)
+            topoOrder.push_back(i);
+    }
+
     for (int i = 0; i < topoOrder.size(); ++i)
-        std::cout << topoOrder[i] + 1 << " ";
+        std::cout << topoOrder[i] << " ";
     std::cout << std::endl;
 }
 
 void Graph::tarjansSort()
 {
+    std::ofstream outputFile{"output.csv", std::ios_base::app};
+    const auto start{std::chrono::high_resolution_clock::now()};
     if (graphRepresentation == "matrix")
     {
         tarjansSortMatrix();
@@ -805,9 +842,14 @@ void Graph::tarjansSort()
     }
     else if (graphRepresentation == "table")
     {
-        //! seg fault
-        // tarjansSortTable();
+        tarjansSortTable();
     }
+    const auto end{std::chrono::high_resolution_clock::now()};
+    auto measureTime = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+
+    outputFile << measureTime.count() << " tarjan " << nodesNumber << " " << graphRepresentation << std::endl;
+    outputFile.flush();
+    outputFile.close();
 }
 
 void Graph::dfsTarjansSort(int u, std::vector<bool> &visited, std::stack<int> &stack)
@@ -825,48 +867,50 @@ void Graph::dfsTarjansSort(int u, std::vector<bool> &visited, std::stack<int> &s
 
 void Graph::dfsTarjansSortList(int u, std::vector<bool> &visited, std::vector<std::vector<int>> &adjacencyList, std::stack<int> &stack)
 {
+    if (visited[u]) // If already visited, return
+        return;
+
     visited[u] = true;
 
     for (int v : adjacencyList[u])
     {
         int neighbor = v - 1;
-        if (!visited[v])
-            dfsTarjansSortList(neighbor, visited, list, stack);
+        dfsTarjansSortList(neighbor, visited, adjacencyList, stack); // Recurse on neighbors
     }
 
-    stack.push(u);
+    stack.push(u); // Push node onto the stack after all its neighbors are visited
 }
 
 void Graph::dfsTarjanSortTable(int u, std::vector<int> &low, std::vector<int> &index, std::vector<bool> &onStack, std::stack<int> &stack)
 {
-    static int currentIndex = 0;
-    index[u - 1] = currentIndex;
-    low[u - 1] = currentIndex;
+    static int currentIndex = 1; // Start index from 1
+    index[u] = currentIndex;
+    low[u] = currentIndex;
     currentIndex++;
     stack.push(u);
-    onStack[u - 1] = true;
+    onStack[u] = true;
 
-    for (int v : table[u])
+    for (int v : table[u - 1]) // Adjust index to 0-based
     {
-        int neighbor = v - 1;
+        int neighbor = v; // No need to subtract 1
         if (index[neighbor] == -1)
         {
-            dfsTarjanSortTable(neighbor + 1, low, index, onStack, stack);
-            low[u - 1] = std::min(low[u - 1], low[neighbor]);
+            dfsTarjanSortTable(neighbor, low, index, onStack, stack);
+            low[u] = std::min(low[u], low[neighbor]);
         }
         else if (onStack[neighbor])
         {
-            low[u - 1] = std::min(low[u - 1], index[neighbor]);
+            low[u] = std::min(low[u], index[neighbor]);
         }
     }
 
-    if (low[u - 1] == index[u - 1])
+    if (low[u] == index[u])
     {
-        while (true)
+        while (!stack.empty())
         {
             int v = stack.top();
             stack.pop();
-            onStack[v - 1] = false;
+            onStack[v] = false;
             if (v == u)
                 break;
         }
@@ -908,20 +952,29 @@ void Graph::tarjansSortList()
         std::cout << stack.top() + 1 << " ";
         stack.pop();
     }
+    std::cout << std::endl;
 }
 
 void Graph::tarjansSortTable()
 {
-    std::vector<int> low(nodesNumber, -1);
-    std::vector<int> index(nodesNumber, -1);
-    std::vector<bool> onStack(nodesNumber, false);
+    // Increase the size of vectors to accommodate 1-based indexing
+    std::vector<int> low(nodesNumber + 1, -1);
+    std::vector<int> index(nodesNumber + 1, -1);
+    std::vector<bool> onStack(nodesNumber + 1, false);
     std::stack<int> stack;
 
-    for (int i = 0; i < nodesNumber; ++i)
+    for (int i = 1; i <= nodesNumber; ++i)
     {
         if (index[i] == -1)
         {
             dfsTarjanSortTable(i, low, index, onStack, stack);
         }
     }
+
+    while (!stack.empty())
+    {
+        std::cout << stack.top() + 1 << " ";
+        stack.pop();
+    }
+    std::cout << std::endl;
 }
