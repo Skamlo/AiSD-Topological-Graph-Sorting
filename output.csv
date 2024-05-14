@@ -59,6 +59,21 @@ time type instance representation
 851 khan 100 matrix
 982 khan 100 matrix
 529 khan 100 matrix
+30 find 100 list
+37 find 100 list
+43 find 100 list
+32 find 100 list
+35 find 100 list
+379 tarjan 100 list
+443 tarjan 100 list
+374 tarjan 100 list
+416 tarjan 100 list
+401 tarjan 100 list
+913 khan 100 list
+904 khan 100 list
+768 khan 100 list
+853 khan 100 list
+951 khan 100 list
 43 find 100 table
 21 find 100 table
 24 find 100 table
@@ -160,4 +175,3 @@ time type instance representation
 57040 khan 1000 table
 59975 khan 1000 table
 55851 khan 1000 table
-
